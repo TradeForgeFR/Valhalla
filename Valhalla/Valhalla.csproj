@@ -31,7 +31,8 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Vahallah.Charting\Valhalla.Charting.csproj" />
-    <ProjectReference Include="..\Vahallah.Interfaces\Valhalla.Interfaces.csproj" />
+    <ProjectReference Include="..\Valhalla.Bases\Valhalla.Bases.csproj" />
+    <ProjectReference Include="..\Valhalla.Charting\Valhalla.Charting.csproj" />
+    <ProjectReference Include="..\Valhalla.Interfaces\Valhalla.Interfaces.csproj" />
   </ItemGroup>
 </Project>
