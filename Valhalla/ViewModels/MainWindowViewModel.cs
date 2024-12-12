@@ -23,7 +23,7 @@ namespace Valhalla.ViewModels
 
         public async Task FillTheChart()
         {
-            var request = await _binanceClient.SpotApi.ExchangeData.GetUIKlinesAsync("BTCUSDT", Binance.Net.Enums.KlineInterval.OneHour, limit: 2000);
+            var request = await this._binanceClient.SpotApi.ExchangeData.GetUIKlinesAsync("BTCUSDT", Binance.Net.Enums.KlineInterval.OneHour, limit: 2000);
 
             if (request.Success)
             {
@@ -34,9 +34,9 @@ namespace Valhalla.ViewModels
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    StockChart.AvaPlot.Plot.Add.Candlestick(bars);
-                    StockChart.AvaPlot.Plot.Axes.DateTimeTicksBottom();
-                    StockChart.AvaPlot.Plot.PlotControl!.Refresh();
+                    this.StockChart.AvaPlot.Plot.Add.Candlestick(bars);
+                    this.StockChart.AvaPlot.Plot.Axes.DateTimeTicksBottom();
+                    this.StockChart.AvaPlot.Plot.PlotControl!.Refresh();
                 }, DispatcherPriority.Background);
             }
             else

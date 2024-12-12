@@ -7,35 +7,40 @@ namespace Valhalla.Charting.ScottPlotExtensions
     public delegate void AnchorMovedHandler(DragableAnchor sender, double X, double Y);
     public class DragableAnchor
     {
+        #region private fields
         private AvaPlot _plot;
-        public Scatter Scatter;
-        int? IndexBeingDragged = null;
+        private int? _indexBeingDragged;
+        private double[] _xs;
+        private double[] _ys;
+        #endregion
 
-        private double[] Xs;
-        private double[] Ys;
+        #region public fields
+        public Scatter? Scatter;
+        public event AnchorMovedHandler? OnMoved;
+        #endregion
 
-        public event AnchorMovedHandler OnMoved;
+
         public DragableAnchor(AvaPlot plot, double x, double y, ScottPlot.Color color)
         {
-            Xs = new[] { x };
-            Ys = new[] { y };
-            Scatter = plot.Plot.Add.Scatter(Xs, Ys);
-            Scatter.LineWidth = 2;
-            Scatter.MarkerSize = 5;
-            Scatter.Smooth = true;
-            Scatter.Color = color;
+            this._xs = [x];
+            this._ys = [y];
+            this.Scatter = plot.Plot.Add.Scatter(_xs, _ys);
+            this.Scatter.LineWidth = 2;
+            this.Scatter.MarkerSize = 5;
+            this.Scatter.Smooth = true;
+            this.Scatter.Color = color;
 
-            plot.PointerPressed += _plot_PointerPressed;
-            plot.PointerMoved += _plot_PointerMoved;
-            plot.PointerReleased += Plot_PointerReleased;
-            _plot = plot;
+            this._plot = plot;
+            this._plot.PointerPressed += _plot_PointerPressed;
+            this._plot.PointerMoved += _plot_PointerMoved;
+            this._plot.PointerReleased += Plot_PointerReleased;            
         }
 
         private void Plot_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
-            IndexBeingDragged = null;
-            _plot.UserInputProcessor.Enable();
-            _plot.Refresh();
+            this._indexBeingDragged = null;
+            this._plot.UserInputProcessor.Enable();
+            this._plot.Refresh();
         }
 
         private void _plot_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
@@ -43,41 +48,41 @@ namespace Valhalla.Charting.ScottPlotExtensions
             var points = e.GetPosition(_plot);
 
             Pixel mousePixel = new(points.X, points.Y);
-            Coordinates mouseLocation = _plot.Plot.GetCoordinates(mousePixel);
-            DataPoint nearest = Scatter.Data.GetNearest(mouseLocation, _plot.Plot.LastRender);
+            Coordinates mouseLocation = this._plot.Plot.GetCoordinates(mousePixel);
+            DataPoint nearest = Scatter.Data.GetNearest(mouseLocation, this._plot.Plot.LastRender);
 
-            if (IndexBeingDragged.HasValue)
+            if (_indexBeingDragged.HasValue)
             {
-                Xs[IndexBeingDragged.Value] = mouseLocation.X;
-                Ys[IndexBeingDragged.Value] = mouseLocation.Y;
+                this._xs[this._indexBeingDragged.Value] = mouseLocation.X;
+                this._ys[this._indexBeingDragged.Value] = mouseLocation.Y;
 
-                OnMoved?.Invoke(this, mouseLocation.X, mouseLocation.Y);
-                _plot.Refresh();
+                this.OnMoved?.Invoke(this, mouseLocation.X, mouseLocation.Y);
+                this._plot.Refresh();
             }
         }
         private void _plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
         {
-            var points = e.GetPosition(_plot);
+            var points = e.GetPosition(this._plot);
 
             Pixel mousePixel = new(points.X, points.Y);
-            Coordinates mouseLocation = _plot.Plot.GetCoordinates(mousePixel);
-            DataPoint nearest = Scatter.Data.GetNearest(mouseLocation, _plot.Plot.LastRender);
-            IndexBeingDragged = nearest.IsReal ? nearest.Index : null;
+            Coordinates mouseLocation = this._plot.Plot.GetCoordinates(mousePixel);
+            DataPoint nearest = Scatter.Data.GetNearest(mouseLocation, this._plot.Plot.LastRender);
+            _indexBeingDragged = nearest.IsReal ? nearest.Index : null;
 
-            if (IndexBeingDragged.HasValue)
-                _plot.UserInputProcessor.Disable();
+            if (this._indexBeingDragged.HasValue)
+                this._plot.UserInputProcessor.Disable();
         }
 
         public double X
         {
             get
             {
-                return Xs[0];
+                return this._xs[0];
             }
             set
             {
-                Xs[0] = value;
-                _plot.Refresh();
+                this._xs[0] = value;
+                this._plot.Refresh();
             }
         }
 
@@ -85,12 +90,12 @@ namespace Valhalla.Charting.ScottPlotExtensions
         {
             get
             {
-                return Ys[0];
+                return this._ys[0];
             }
             set
             {
-                Ys[0] = value;
-                _plot.Refresh();
+                this._ys[0] = value;
+                this._plot.Refresh();
             }
         }
     }

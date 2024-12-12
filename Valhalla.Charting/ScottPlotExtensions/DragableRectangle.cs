@@ -6,16 +6,21 @@ namespace Valhalla.Charting.ScottPlotExtensions
 {
     public class DragableRectangle
     {
+        #region private fields
         private Rectangle _rect;
         private bool _inCreationMode = true;
         private bool _startedToDraw = false;
         private AvaPlot _plot;
         private DragableAnchor _anchorTopRight, _anchorTopLeft, _anchorBottomRight, _anchorBottomLeft;
+        #endregion
+
+        #region public fields
         public double X1 { get; set; }
         public double X2 { get; set; }
         public double Y1 { get; set; }
         public double Y2 { get; set; }
 
+        #endregion
         public DragableRectangle(AvaPlot plot, double x1, double x2, double y1, double y2)
         {
             this._plot = plot;
@@ -24,98 +29,97 @@ namespace Valhalla.Charting.ScottPlotExtensions
             this.Y1 = y1;
             this.Y2 = y2;
 
-            _rect = _plot.Plot.Add.Rectangle(x1, x2, y1, y2);
-            _plot.PointerMoved += this._plot_PointerMoved;
+            this._rect = this._plot.Plot.Add.Rectangle(x1, x2, y1, y2);
+            this._plot.PointerMoved += this._plot_PointerMoved;
 
-            _anchorTopRight = new DragableAnchor(plot, x1, y1, _rect.LineColor);
-            _anchorBottomRight = new DragableAnchor(plot, x1, y1, _rect.LineColor);
-            _anchorTopLeft = new DragableAnchor(plot, x1, y1, _rect.LineColor);
-            _anchorBottomLeft = new DragableAnchor(plot, x1, y1, _rect.LineColor);
+            this._anchorTopRight = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
+            this._anchorBottomRight = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
+            this._anchorTopLeft = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
+            this._anchorBottomLeft = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
 
-            _anchorBottomRight.OnMoved += this._anchorBottomRight_OnMoved;
-            _anchorBottomLeft.OnMoved += this._anchorBottomLeft_OnMoved1;
-            _anchorTopRight.OnMoved += this._anchorTopRight_OnMoved;
-            _anchorTopLeft.OnMoved += this._anchorTopLeft_OnMoved;
-            _inCreationMode = true;
+            this._anchorBottomRight.OnMoved += this._anchorBottomRight_OnMoved;
+            this._anchorBottomLeft.OnMoved += this._anchorBottomLeft_OnMoved1;
+            this._anchorTopRight.OnMoved += this._anchorTopRight_OnMoved;
+            this._anchorTopLeft.OnMoved += this._anchorTopLeft_OnMoved;
+            this._inCreationMode = true;
         }
 
         private void _anchorTopLeft_OnMoved(DragableAnchor sender, double X, double Y)
         {
-            _rect.X2 = X;
-            _rect.Y2 = Y;
+            this._rect.X2 = X;
+            this._rect.Y2 = Y;
 
-            _anchorTopRight.Y = Y;
-            _anchorBottomLeft.X = X;
+            this._anchorTopRight.Y = Y;
+            this._anchorBottomLeft.X = X;
         }
 
         private void _anchorTopRight_OnMoved(DragableAnchor sender, double X, double Y)
         {
-            _rect.X1 = X;
-            _rect.Y2 = Y;
+            this._rect.X1 = X;
+            this._rect.Y2 = Y;
 
-            _anchorTopLeft.Y = Y;
-            _anchorBottomRight.X = X;
+            this._anchorTopLeft.Y = Y;
+            this._anchorBottomRight.X = X;
         }
 
         private void _anchorBottomLeft_OnMoved1(DragableAnchor sender, double X, double Y)
         {
-            _rect.X2 = X;
-            _rect.Y1 = Y;
+            this._rect.X2 = X;
+            this._rect.Y1 = Y;
 
-            _anchorTopLeft.X = X;
-            _anchorBottomRight.Y = Y;
+            this._anchorTopLeft.X = X;
+            this._anchorBottomRight.Y = Y;
 
-            _plot.Refresh();
+            this._plot.Refresh();
         }
 
         private void _anchorBottomRight_OnMoved(DragableAnchor sender, double X, double Y)
         {
-            _rect.X1 = X;
-            _rect.Y1 = Y;
+            this._rect.X1 = X;
+            this._rect.Y1 = Y;
 
-            _anchorTopRight.X = X;
-            _anchorBottomLeft.Y = Y;
-            _plot.Refresh();
+            this._anchorTopRight.X = X;
+            this._anchorBottomLeft.Y = Y;
+            this._plot.Refresh();
         }
 
         private void _plot_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
-            _inCreationMode = false;
-            _plot.PointerMoved -= this._plot_PointerMoved;
+            this._inCreationMode = false;
+            this._plot.PointerMoved -= this._plot_PointerMoved;
 
-            _anchorBottomRight.X = _rect.X1;
-            _anchorBottomRight.Y = _rect.Y1;
+            this._anchorBottomRight.X = this._rect.X1;
+            this._anchorBottomRight.Y = this._rect.Y1;
 
-            _anchorTopRight.X = _rect.X1;
-            _anchorTopRight.Y = _rect.Y2;
+            this._anchorTopRight.X = this._rect.X1;
+            this._anchorTopRight.Y = this._rect.Y2;
 
-            _anchorBottomLeft.X = _rect.X2;
-            _anchorBottomLeft.Y = _rect.Y1;
+            this._anchorBottomLeft.X = this._rect.X2;
+            this._anchorBottomLeft.Y = this._rect.Y1;
 
-            _plot.PointerReleased -= this._plot_PointerReleased;
+            this._plot.PointerReleased -= this._plot_PointerReleased;
         }
 
         private void _plot_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
         {
-            if (!_inCreationMode)
+            if (!this._inCreationMode)
                 return;
 
             var points = e.GetPosition(_plot);
 
             Pixel mousePixel = new(points.X, points.Y);
-            Coordinates mouseLocation = _plot.Plot.GetCoordinates(mousePixel);
-            //   _plot.Cursor = nearest.IsReal ? Cursors.Hand : Cursors.Arrow;
+            Coordinates mouseLocation = this._plot.Plot.GetCoordinates(mousePixel); 
 
-            _rect.X1 = mouseLocation.X;
-            _rect.Y1 = mouseLocation.Y;
+            this._rect.X1 = mouseLocation.X;
+            this._rect.Y1 = mouseLocation.Y;
 
 
-            _plot.Refresh();
+            this._plot.Refresh();
 
-            if (!_startedToDraw)
+            if (!this._startedToDraw)
             {
-                _plot.PointerReleased += this._plot_PointerReleased;
-                _startedToDraw = true;
+                this._plot.PointerReleased += this._plot_PointerReleased;
+                this._startedToDraw = true;
             }
         }
     }
