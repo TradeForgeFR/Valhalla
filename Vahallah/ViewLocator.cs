@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using System;
-using Vahallah.ViewModels;
+using Valhalla.ViewModels;
 
-namespace Vahallah
+namespace Valhalla
 {
     public class ViewLocator : IDataTemplate
     {

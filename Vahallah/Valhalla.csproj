@@ -6,6 +6,8 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AssemblyName>Valhalla</AssemblyName>
+    <RootNamespace>Valhalla</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +31,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Vahallah.Charting\Vahallah.Charting.csproj" />
-    <ProjectReference Include="..\Vahallah.Interfaces\Vahallah.Interfaces.csproj" />
+    <ProjectReference Include="..\Vahallah.Charting\Valhalla.Charting.csproj" />
+    <ProjectReference Include="..\Vahallah.Interfaces\Valhalla.Interfaces.csproj" />
   </ItemGroup>
 </Project>

@@ -3,12 +3,12 @@ using ScottPlot;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Vahallah.Charting;
+using Valhalla.Charting;
 using Binance.Net.Clients;
 using System.Linq;
 using System;
 
-namespace Vahallah.ViewModels
+namespace Valhalla.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {

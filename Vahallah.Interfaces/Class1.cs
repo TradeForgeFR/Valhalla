@@ -1,4 +1,4 @@
-﻿namespace Vahallah.Interfaces
+﻿namespace Valhalla.Interfaces
 {
     public interface  IMarketProvider
     {

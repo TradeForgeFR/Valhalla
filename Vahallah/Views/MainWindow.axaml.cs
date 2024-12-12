@@ -1,7 +1,7 @@
 using Avalonia.Controls;
-using Vahallah.ViewModels;
+using Valhalla.ViewModels;
 
-namespace Vahallah.Views
+namespace Valhalla.Views
 {
     public partial class MainWindow : Window
     {

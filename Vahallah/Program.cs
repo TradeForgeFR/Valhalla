@@ -2,7 +2,7 @@
 using Avalonia.ReactiveUI;
 using System;
 
-namespace Vahallah
+namespace Valhalla
 {
     internal sealed class Program
     {

@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace Vahallah.ViewModels
+namespace Valhalla.ViewModels
 {
     public class ViewModelBase : ReactiveObject
     {

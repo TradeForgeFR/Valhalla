@@ -1,4 +1,4 @@
-﻿namespace Vahallah.Bases
+﻿namespace Valhalla.Bases
 {
     public class Class1
     {

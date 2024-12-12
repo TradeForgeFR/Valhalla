@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
 using ScottPlot;
 using ScottPlot.Avalonia;
-using Vahallah.Charting.ScottPlotExtensions;
+using Valhalla.Charting.ScottPlotExtensions;
 
-namespace Vahallah.Charting
+namespace Valhalla.Charting
 {
     public class StockChart : ReactiveObject
     {

@@ -2,7 +2,7 @@
 using ScottPlot.Plottables;
 using ScottPlot;
 
-namespace Vahallah.Charting.ScottPlotExtensions
+namespace Valhalla.Charting.ScottPlotExtensions
 {
     public delegate void AnchorMovedHandler(DragableAnchor sender, double X, double Y);
     public class DragableAnchor

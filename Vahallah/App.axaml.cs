@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Vahallah.ViewModels;
-using Vahallah.Views;
+using Valhalla.ViewModels;
+using Valhalla.Views;
 
-namespace Vahallah
+namespace Valhalla
 {
     public partial class App : Application
     {
