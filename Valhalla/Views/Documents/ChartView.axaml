@@ -1,0 +1,11 @@
+<UserControl x:Class="Valhalla.Views.Documents.ChartView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Valhalla.ViewModels"
+             x:DataType="vm:Documents.ChartViewModel">
+    <Grid RowDefinitions="auto,*">
+        <Button Content="rectangle"
+                Command="{Binding StockChart.StartDrawingRectCommand} "/>
+        <ContentControl Content="{Binding StockChart.AvaPlotHost}" Grid.Row="1"/>
+    </Grid>
+</UserControl>

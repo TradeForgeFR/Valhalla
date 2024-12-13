@@ -1,33 +1,41 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using System;
-using Valhalla.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Dock.Model.Core;
 
-namespace Valhalla
+namespace Valhalla;
+
+public class ViewLocator : IDataTemplate
 {
-    public class ViewLocator : IDataTemplate
+    public Control Build(object? data)
     {
-        public Control? Build(object? data)
+        var name = data?.GetType().FullName?.Replace("ViewModel", "View");
+        if (name is null)
         {
-            if (data is null)
-                return null;
-
-            var name = data.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
-            var type = Type.GetType(name);
-
-            if (type != null)
+            return new TextBlock { Text = "Invalid Data Type" };
+        }
+        var type = Type.GetType(name);
+        if (type is { })
+        {
+            var instance = Activator.CreateInstance(type);
+            if (instance is { })
             {
-                var control = (Control)Activator.CreateInstance(type)!;
-                control.DataContext = data;
-                return control;
+                return (Control)instance;
             }
-
+            else
+            {
+                return new TextBlock { Text = "Create Instance Failed: " + type.FullName };
+            }
+        }
+        else
+        {
             return new TextBlock { Text = "Not Found: " + name };
         }
+    }
 
-        public bool Match(object? data)
-        {
-            return data is ViewModelBase;
-        }
+    public bool Match(object? data)
+    {
+        return data is ObservableObject || data is IDockable;
     }
 }
