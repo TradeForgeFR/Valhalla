@@ -52,7 +52,5 @@ namespace Valhalla.Charting
                 _drawingRectangleMode = false;
             }
         }
-
-
     }
 }
