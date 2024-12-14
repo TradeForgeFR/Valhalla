@@ -25,6 +25,9 @@ namespace Valhalla.Charting.DrawingObjects
             set
             {
                 this._rect.X1= NumericConversion.ToNumber(value);
+                this._anchorTopLeft.X = value;
+                this._anchorBottomLeft.X = value;
+                this.Refresh();
             }
         }
         public override DateTime X2
@@ -36,6 +39,9 @@ namespace Valhalla.Charting.DrawingObjects
             set
             {
                 this._rect.X2 = NumericConversion.ToNumber(value);
+                this._anchorTopRight.X = value;
+                this._anchorTopLeft.X = value;
+                this.Refresh();
             }
         }
         public override double Y1
@@ -47,6 +53,9 @@ namespace Valhalla.Charting.DrawingObjects
             set
             {
                 this._rect.Y1 = value;
+                this._anchorTopRight.Y = value;
+                this._anchorTopLeft.Y = value;
+                this.Refresh();
             }
         }
 
@@ -59,6 +68,9 @@ namespace Valhalla.Charting.DrawingObjects
             set
             {
                 this._rect.Y2= value;
+                this._anchorBottomRight.Y = value;
+                this._anchorBottomLeft.Y = value;
+                this.Refresh();
             }
         }
 
