@@ -176,6 +176,8 @@ namespace Valhalla.Charting.DrawingObjects
             this._plot.Plot.Remove(this._line);
             this._plot.Plot.Remove(this._anchorLeft.Scatter!);
             this._plot.Plot.Remove(this._anchorRight.Scatter!);
+
+            this.Refresh();
         }
     }
 }

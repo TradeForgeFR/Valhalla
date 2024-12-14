@@ -6,12 +6,14 @@ namespace Valhalla.Charting.DrawingObjects
     {
         public static DraggableRectangle StartDrawingDraggableRectangle(this AvaPlot plot, double x, double y)
         {
+           plot.UserInputProcessor.Disable();
             var rectandle = new DraggableRectangle(plot, x, x, y, y);
             return rectandle;
         }
 
         public static DraggableTrendLine StartDrawingDraggableTrendLine(this AvaPlot plot, double x, double y)
         {
+            plot.UserInputProcessor.Disable();
             var line = new DraggableTrendLine(plot, x, x, y, y);
             return line;
         }
