@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
 using ScottPlot;
 using ScottPlot.Avalonia;
-using Valhalla.Charting.ScottPlotExtensions;
+using Valhalla.Charting.DrawingObjects;
 
 namespace Valhalla.Charting
 {

@@ -12,4 +12,8 @@
     <PackageReference Include="ScottPlot.Avalonia" Version="5.0.47" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Valhalla.TechnicalAnalysis\Valhalla.TechnicalAnalysis.csproj" />
+  </ItemGroup>
+
 </Project>

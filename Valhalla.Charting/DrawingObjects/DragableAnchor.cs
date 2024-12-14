@@ -1,11 +1,12 @@
 ﻿using ScottPlot.Avalonia;
 using ScottPlot.Plottables;
 using ScottPlot;
+using Valhalla.TechnicalAnalysis.Interfaces;
 
-namespace Valhalla.Charting.ScottPlotExtensions
+namespace Valhalla.Charting.DrawingObjects
 {
     public delegate void AnchorMovedHandler(DragableAnchor sender, double X, double Y);
-    public class DragableAnchor
+    public class DragableAnchor : IDrawingObject, ISingleCoordinateDrawingObject
     {
         #region private fields
         private AvaPlot _plot;
@@ -18,7 +19,6 @@ namespace Valhalla.Charting.ScottPlotExtensions
         public Scatter? Scatter;
         public event AnchorMovedHandler? OnMoved;
         #endregion
-
 
         public DragableAnchor(AvaPlot plot, double x, double y, ScottPlot.Color color)
         {
@@ -73,15 +73,20 @@ namespace Valhalla.Charting.ScottPlotExtensions
                 this._plot.UserInputProcessor.Disable();
         }
 
-        public double X
+        public void Refresh()
+        {
+            this._plot.Refresh();
+        }
+
+        public DateTime X
         {
             get
             {
-                return this._xs[0];
+                return NumericConversion.ToDateTime(this._xs[0]);
             }
             set
             {
-                this._xs[0] = value;
+                this._xs[0] = NumericConversion.ToNumber(value); 
                 this._plot.Refresh();
             }
         }
@@ -98,5 +103,19 @@ namespace Valhalla.Charting.ScottPlotExtensions
                 this._plot.Refresh();
             }
         }
+
+        public string Name { get; set; }
+        public bool IsVisible
+        {
+            get
+            {
+                return this.Scatter!.IsVisible;
+            }
+            set
+            {
+                this.Scatter!.IsVisible = value;
+            }
+        }
+        public bool IsDragable { get; set; } = false;
     }
 }

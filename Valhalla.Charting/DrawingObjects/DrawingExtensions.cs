@@ -1,6 +1,6 @@
 ﻿using ScottPlot.Avalonia;
 
-namespace Valhalla.Charting.ScottPlotExtensions
+namespace Valhalla.Charting.DrawingObjects
 {
     public static class DrawingExtensions
     {
