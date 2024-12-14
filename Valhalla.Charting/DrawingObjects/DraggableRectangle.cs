@@ -2,10 +2,11 @@
 using ScottPlot.Plottables;
 using ScottPlot;
 using System.Diagnostics;
+using Valhalla.Charting.Interfaces;
 
 namespace Valhalla.Charting.DrawingObjects
 {
-    public class DraggableRectangle : Valhalla.TechnicalAnalysis.DrawingObjects.Rectangle
+    public class DraggableRectangle : Valhalla.TechnicalAnalysis.DrawingObjects.Rectangle, IPlottableContainer
     {
         #region private fields
         private Rectangle _rect;
@@ -137,8 +138,7 @@ namespace Valhalla.Charting.DrawingObjects
             this._anchorBottomLeft.OnMoved += this._anchorBottomLeft_OnMoved1;
             this._anchorTopRight.OnMoved += this._anchorTopRight_OnMoved;
             this._anchorTopLeft.OnMoved += this._anchorTopLeft_OnMoved;
-            this._inCreationMode = true;
-           
+            this._inCreationMode = true;           
         }
 
         private void _anchorTopLeft_OnMoved(DraggableAnchor sender, double X, double Y)
@@ -225,6 +225,17 @@ namespace Valhalla.Charting.DrawingObjects
         public override void Refresh()
         {
             this._plot.Refresh();
+        }
+
+        public void RemovePlottables()
+        {
+            this._plot.Plot.Remove(this._rect);
+            this._plot.Plot.Remove(this._anchorTopLeft.Scatter!);
+            this._plot.Plot.Remove(this._anchorTopRight.Scatter!);
+            this._plot.Plot.Remove(this._anchorBottomRight.Scatter!);
+            this._plot.Plot.Remove(this._anchorBottomLeft.Scatter!);
+
+            this.Refresh();
         }
     }
 }

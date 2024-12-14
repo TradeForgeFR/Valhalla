@@ -18,6 +18,10 @@
 
   <Grid RowDefinitions="auto,*">
     <StackPanel Orientation="Horizontal">
+      <Button Background="Red"
+              Command="{Binding StockChart.DrawingObjectsManager.ClearDrawingObjectsCommand} "
+              Foreground="White"
+              Content="Clear"/>
       <Button Content="rectangle"
              Command="{Binding StockChart.DrawingObjectsManager.StartDrawingRectCommand} "/>
       <Button Content="Trend Line"

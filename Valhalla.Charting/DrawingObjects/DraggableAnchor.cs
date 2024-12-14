@@ -130,5 +130,10 @@ namespace Valhalla.Charting.DrawingObjects
                 this._isDraggable = value;
             }
         }
+
+        public Scatter Plottable
+        {
+            get => this.Scatter!;
+        }
     }
 }

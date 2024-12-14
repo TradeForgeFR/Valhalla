@@ -2,10 +2,11 @@
 using ScottPlot.Plottables;
 using ScottPlot;
 using System.Diagnostics;
+using Valhalla.Charting.Interfaces;
 
 namespace Valhalla.Charting.DrawingObjects
 {
-    public class DraggableTrendLine : Valhalla.TechnicalAnalysis.DrawingObjects.TrendLine
+    public class DraggableTrendLine : Valhalla.TechnicalAnalysis.DrawingObjects.TrendLine, IPlottableContainer
     {
         #region private fields
         private LinePlot _line;
@@ -118,7 +119,6 @@ namespace Valhalla.Charting.DrawingObjects
             this._anchorLeft.OnMoved += this._anchorRight_OnMoved;
             this._anchorRight.OnMoved += this._anchorLeft_OnMoved;
             this._inCreationMode = true;
-
         }
 
         private void _anchorLeft_OnMoved(DraggableAnchor sender, double X, double Y)
@@ -169,6 +169,13 @@ namespace Valhalla.Charting.DrawingObjects
         public override void Refresh()
         {
             this._plot.Refresh();
+        }
+
+        public void RemovePlottables()
+        {
+            this._plot.Plot.Remove(this._line);
+            this._plot.Plot.Remove(this._anchorLeft.Scatter!);
+            this._plot.Plot.Remove(this._anchorRight.Scatter!);
         }
     }
 }

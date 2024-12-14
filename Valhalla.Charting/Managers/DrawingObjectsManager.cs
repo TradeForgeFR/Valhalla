@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using ReactiveUI;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using Valhalla.Charting.DrawingObjects;
+using Valhalla.Charting.Interfaces;
 
 namespace Valhalla.Charting.Managers
 {
@@ -11,6 +13,7 @@ namespace Valhalla.Charting.Managers
         #region private
         private bool _drawingRectangleMode = false, _drawingTrendLineMode = false;
         private List<AvaPlot> _plots = new List<AvaPlot>();
+        private List<IPlottableContainer> _IPlottableContainer = new List<IPlottableContainer>();
         #endregion
 
         public DrawingObjectsManager() 
@@ -24,15 +27,26 @@ namespace Valhalla.Charting.Managers
             {
                 this._drawingTrendLineMode = true;
             });
+
+            this.ClearDrawingObjectsCommand = new RelayCommand(() =>
+            {
+                foreach(var plot in this._IPlottableContainer)
+                {
+                    (plot as IPlottableContainer).RemovePlottables();
+                }
+            });
         }
         public void AddPlot(AvaPlot plot)
         {
             plot.PointerPressed += Plot_PointerPressed;
+            this._plots.Add(plot);
         }
 
         public RelayCommand? StartDrawingRectCommand { get; set; }
 
         public RelayCommand? StartDrawingTrendLineCommand { get; set; }
+
+        public RelayCommand? ClearDrawingObjectsCommand { get; set; }
 
         private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
         {
@@ -47,13 +61,15 @@ namespace Valhalla.Charting.Managers
 
             if (this._drawingRectangleMode)
             {
-                plot!.StartDrawingDraggableRectangle(mouseLocation.X, mouseLocation.Y);
+                var rectangle = plot!.StartDrawingDraggableRectangle(mouseLocation.X, mouseLocation.Y);
+                this._IPlottableContainer.Add(rectangle);
 
                 this._drawingRectangleMode = false;
             }
             else if (this._drawingTrendLineMode)
             {
-                plot!.StartDrawingDraggableTrendLine(mouseLocation.X, mouseLocation.Y);
+                var trendLine = plot!.StartDrawingDraggableTrendLine(mouseLocation.X, mouseLocation.Y);
+                this._IPlottableContainer.Add(trendLine);
 
                 this._drawingTrendLineMode = false;
             }
