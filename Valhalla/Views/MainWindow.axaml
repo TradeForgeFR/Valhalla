@@ -19,9 +19,9 @@
   <Grid RowDefinitions="auto,*">
     <StackPanel Orientation="Horizontal">
       <Button Content="rectangle"
-             Command="{Binding StockChart.StartDrawingRectCommand} "/>
+             Command="{Binding StockChart.DrawingObjectsManager.StartDrawingRectCommand} "/>
       <Button Content="Trend Line"
-             Command="{Binding StockChart.StartDrawingTrendLineCommand} "/>
+             Command="{Binding StockChart.DrawingObjectsManager.StartDrawingTrendLineCommand} "/>
     </StackPanel>
     <ContentControl Content="{Binding StockChart.AvaPlotHost}"
                     Grid.Row="1"/>

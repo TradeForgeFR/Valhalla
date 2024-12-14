@@ -1,9 +1,7 @@
 ﻿using Avalonia.Controls;
-using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
-using ScottPlot;
 using ScottPlot.Avalonia;
-using Valhalla.Charting.DrawingObjects;
+using Valhalla.Charting.Managers;
 
 namespace Valhalla.Charting
 {
@@ -12,7 +10,6 @@ namespace Valhalla.Charting
         #region private
         private AvaPlot _avaplot;
         private Grid _avaPlotHost;
-        private bool _drawingRectangleMode = false, _drawingTrendLineMode = false;
         #endregion
 
         public StockChart()
@@ -20,50 +17,15 @@ namespace Valhalla.Charting
             this._avaplot = new AvaPlot();
             this._avaPlotHost = new Grid();
             this._avaPlotHost.Children.Add(this._avaplot);
-
-            this.AvaPlot.PointerPressed += Plot_PointerPressed;
-
-            this.StartDrawingRectCommand = new RelayCommand(() =>
-            {
-                this._drawingRectangleMode = true;
-            });
-
-            this.StartDrawingTrendLineCommand = new RelayCommand(() =>
-            {
-                this._drawingTrendLineMode = true;
-            });
+            this.DrawingObjectsManager.AddPlot(this._avaplot);
         }
 
         #region Public Fields
         public AvaPlot AvaPlot { get { return this._avaplot; } }
 
-        public Grid AvaPlotHost { get {  return this._avaPlotHost; } }
+        public Grid AvaPlotHost { get {  return this._avaPlotHost; } } 
 
-        public RelayCommand? StartDrawingRectCommand { get; set; }
-
-        public RelayCommand? StartDrawingTrendLineCommand { get; set; }
+        public DrawingObjectsManager DrawingObjectsManager { get; } = new DrawingObjectsManager();
         #endregion
-
-        private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
-        {
-            var plot = sender as AvaPlot;
-            var points = e.GetPosition(plot);
-
-            Pixel mousePixel = new(points.X, points.Y);
-            Coordinates mouseLocation = plot!.Plot.GetCoordinates(mousePixel);
-
-            if (this._drawingRectangleMode)
-            {
-                plot!.StartDrawingDraggableRectangle(mouseLocation.X, mouseLocation.Y);
-
-                this._drawingRectangleMode = false;
-            }
-            else if (this._drawingTrendLineMode)
-            {
-                plot!.StartDrawingDraggableTrendLine(mouseLocation.X, mouseLocation.Y);
-
-                this._drawingTrendLineMode = false;
-            }
-        }
     }
 }
