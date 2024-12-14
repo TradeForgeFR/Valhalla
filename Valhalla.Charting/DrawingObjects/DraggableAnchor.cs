@@ -5,8 +5,8 @@ using Valhalla.TechnicalAnalysis.Interfaces;
 
 namespace Valhalla.Charting.DrawingObjects
 {
-    public delegate void AnchorMovedHandler(DragableAnchor sender, double X, double Y);
-    public class DragableAnchor : IDrawingObject, ISingleCoordinateDrawingObject
+    public delegate void AnchorMovedHandler(DraggableAnchor sender, double X, double Y);
+    public class DraggableAnchor : IDrawingObject, ISingleCoordinateDrawingObject
     {
         #region private fields
         private AvaPlot _plot;
@@ -20,7 +20,7 @@ namespace Valhalla.Charting.DrawingObjects
         public event AnchorMovedHandler? OnMoved;
         #endregion
 
-        public DragableAnchor(AvaPlot plot, double x, double y, ScottPlot.Color color)
+        public DraggableAnchor(AvaPlot plot, double x, double y, ScottPlot.Color color)
         {
             this._xs = [x];
             this._ys = [y];

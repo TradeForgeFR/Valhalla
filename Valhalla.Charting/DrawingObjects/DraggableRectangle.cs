@@ -5,14 +5,14 @@ using System.Diagnostics;
 
 namespace Valhalla.Charting.DrawingObjects
 {
-    public class DragableRectangle : Valhalla.TechnicalAnalysis.DrawingObjects.Rectangle
+    public class DraggableRectangle : Valhalla.TechnicalAnalysis.DrawingObjects.Rectangle
     {
         #region private fields
         private Rectangle _rect;
         private bool _inCreationMode = true;
         private bool _startedToDraw = false;
         private AvaPlot _plot;
-        private DragableAnchor _anchorTopRight, _anchorTopLeft, _anchorBottomRight, _anchorBottomLeft;
+        private DraggableAnchor _anchorTopRight, _anchorTopLeft, _anchorBottomRight, _anchorBottomLeft;
         #endregion
 
         #region public fields
@@ -88,6 +88,7 @@ namespace Valhalla.Charting.DrawingObjects
                 this._anchorTopRight.IsVisible = this.IsDragable;
                 this._anchorBottomLeft.IsVisible = this.IsDragable;
                 this._anchorBottomRight.IsVisible = this.IsDragable;
+                this.Refresh();
             }
         }
         public override bool IsDragable
@@ -102,10 +103,11 @@ namespace Valhalla.Charting.DrawingObjects
                 this._anchorTopRight.IsVisible = value;
                 this._anchorBottomLeft.IsVisible = value;
                 this._anchorBottomRight.IsVisible = value;
+                this.Refresh();
             }
         }
         #endregion
-        public DragableRectangle(AvaPlot plot, double x1, double x2, double y1, double y2)
+        public DraggableRectangle(AvaPlot plot, double x1, double x2, double y1, double y2)
         {
             this._plot = plot;
             /*this.X1 = x1;
@@ -116,10 +118,10 @@ namespace Valhalla.Charting.DrawingObjects
             this._rect = this._plot.Plot.Add.Rectangle(x1, x2, y1, y2);
             this._plot.PointerMoved += this._plot_PointerMoved;
 
-            this._anchorTopRight = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
-            this._anchorBottomRight = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
-            this._anchorTopLeft = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
-            this._anchorBottomLeft = new DragableAnchor(plot, x1, y1, this._rect.LineColor);
+            this._anchorTopRight = new DraggableAnchor(plot, x1, y1, this._rect.LineColor);
+            this._anchorBottomRight = new DraggableAnchor(plot, x1, y1, this._rect.LineColor);
+            this._anchorTopLeft = new DraggableAnchor(plot, x1, y1, this._rect.LineColor);
+            this._anchorBottomLeft = new DraggableAnchor(plot, x1, y1, this._rect.LineColor);
 
             this._anchorBottomRight.OnMoved += this._anchorBottomRight_OnMoved;
             this._anchorBottomLeft.OnMoved += this._anchorBottomLeft_OnMoved1;
@@ -129,7 +131,7 @@ namespace Valhalla.Charting.DrawingObjects
            
         }
 
-        private void _anchorTopLeft_OnMoved(DragableAnchor sender, double X, double Y)
+        private void _anchorTopLeft_OnMoved(DraggableAnchor sender, double X, double Y)
         {
             this._rect.X2 = X;
             this._rect.Y2 = Y;
@@ -140,7 +142,7 @@ namespace Valhalla.Charting.DrawingObjects
             Debug.WriteLine(NumericConversion.ToDateTime(this._rect.X2));
         }
 
-        private void _anchorTopRight_OnMoved(DragableAnchor sender, double X, double Y)
+        private void _anchorTopRight_OnMoved(DraggableAnchor sender, double X, double Y)
         {
             this._rect.X1 = X;
             this._rect.Y2 = Y;
@@ -149,7 +151,7 @@ namespace Valhalla.Charting.DrawingObjects
             this._anchorBottomRight.X = NumericConversion.ToDateTime(X);
         }
 
-        private void _anchorBottomLeft_OnMoved1(DragableAnchor sender, double X, double Y)
+        private void _anchorBottomLeft_OnMoved1(DraggableAnchor sender, double X, double Y)
         {
             this._rect.X2 = X;
             this._rect.Y1 = Y;
@@ -160,7 +162,7 @@ namespace Valhalla.Charting.DrawingObjects
             this._plot.Refresh();
         }
 
-        private void _anchorBottomRight_OnMoved(DragableAnchor sender, double X, double Y)
+        private void _anchorBottomRight_OnMoved(DraggableAnchor sender, double X, double Y)
         {
             this._rect.X1 = X;
             this._rect.Y1 = Y;
