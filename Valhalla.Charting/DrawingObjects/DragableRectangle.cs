@@ -62,9 +62,36 @@ namespace Valhalla.Charting.DrawingObjects
             }
         }
 
-        public override string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override bool IsVisible { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override bool IsDragable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override string Name { get; set;  }
+        public override bool IsVisible
+        {
+            get
+            {
+                return this._rect.IsVisible;
+            }
+            set
+            {
+                this._rect.IsVisible = value;
+                this._anchorTopLeft.IsVisible = this.IsDragable;
+                this._anchorTopRight.IsVisible = this.IsDragable;
+                this._anchorBottomLeft.IsVisible = this.IsDragable;
+                this._anchorBottomRight.IsVisible = this.IsDragable;
+            }
+        }
+        public override bool IsDragable
+        {
+            get
+            {
+                return this._anchorTopLeft.IsVisible;
+            }
+            set
+            {
+                this._anchorTopLeft.IsVisible = value;
+                this._anchorTopRight.IsVisible = value;
+                this._anchorBottomLeft.IsVisible = value;
+                this._anchorBottomRight.IsVisible = value;
+            }
+        }
         #endregion
         public DragableRectangle(AvaPlot plot, double x1, double x2, double y1, double y2)
         {
