@@ -13,6 +13,7 @@ namespace Valhalla.Charting.DrawingObjects
         private int? _indexBeingDragged;
         private double[] _xs;
         private double[] _ys;
+        private bool _isDraggable = true;
         #endregion
 
         #region public fields
@@ -62,6 +63,8 @@ namespace Valhalla.Charting.DrawingObjects
         }
         private void _plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
         {
+            if(!this.IsDraggable) return;
+
             var points = e.GetPosition(this._plot);
 
             Pixel mousePixel = new(points.X, points.Y);
@@ -116,6 +119,16 @@ namespace Valhalla.Charting.DrawingObjects
                 this.Scatter!.IsVisible = value;
             }
         }
-        public bool IsDragable { get; set; } = false;
+        public bool IsDraggable
+        {
+            get
+            {
+                return this._isDraggable;
+            }
+            set
+            {
+                this._isDraggable = value;
+            }
+        }
     }
 }

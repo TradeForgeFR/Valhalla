@@ -10,7 +10,7 @@ namespace Valhalla.TechnicalAnalysis.DrawingObjects
         public abstract double Y2 { get; set; }
         public abstract string Name { get; set; }
         public abstract bool IsVisible { get; set; }
-        public abstract bool IsDragable { get; set; }
+        public abstract bool IsDraggable { get; set; }
         public abstract void Refresh();
     }
 }

@@ -12,7 +12,7 @@ namespace Valhalla.TechnicalAnalysis.Interfaces
 
         bool IsVisible { get; set; }
 
-        bool IsDragable { get; set; }
+        bool IsDraggable { get; set; }
 
         void Refresh();
     }

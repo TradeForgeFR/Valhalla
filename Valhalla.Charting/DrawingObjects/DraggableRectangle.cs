@@ -84,14 +84,14 @@ namespace Valhalla.Charting.DrawingObjects
             set
             {
                 this._rect.IsVisible = value;
-                this._anchorTopLeft.IsVisible = this.IsDragable;
-                this._anchorTopRight.IsVisible = this.IsDragable;
-                this._anchorBottomLeft.IsVisible = this.IsDragable;
-                this._anchorBottomRight.IsVisible = this.IsDragable;
+                this._anchorTopLeft.IsVisible = this.IsDraggable;
+                this._anchorTopRight.IsVisible = this.IsDraggable;
+                this._anchorBottomLeft.IsVisible = this.IsDraggable;
+                this._anchorBottomRight.IsVisible = this.IsDraggable;
                 this.Refresh();
             }
         }
-        public override bool IsDragable
+        public override bool IsDraggable
         {
             get
             {
@@ -103,6 +103,10 @@ namespace Valhalla.Charting.DrawingObjects
                 this._anchorTopRight.IsVisible = value;
                 this._anchorBottomLeft.IsVisible = value;
                 this._anchorBottomRight.IsVisible = value;
+                this._anchorTopLeft.IsDraggable = value;
+                this._anchorTopRight.IsDraggable = value;
+                this._anchorBottomLeft.IsDraggable = value;
+                this._anchorBottomRight.IsDraggable = value;
                 this.Refresh();
             }
         }
@@ -110,10 +114,6 @@ namespace Valhalla.Charting.DrawingObjects
         public DraggableRectangle(AvaPlot plot, double x1, double x2, double y1, double y2)
         {
             this._plot = plot;
-            /*this.X1 = x1;
-            this.X2 = x2;
-            this.Y1 = y1;
-            this.Y2 = y2;*/
 
             this._rect = this._plot.Plot.Add.Rectangle(x1, x2, y1, y2);
             this._plot.PointerMoved += this._plot_PointerMoved;
@@ -159,7 +159,7 @@ namespace Valhalla.Charting.DrawingObjects
             this._anchorTopLeft.X = NumericConversion.ToDateTime(X);
             this._anchorBottomRight.Y = Y;
 
-            this._plot.Refresh();
+            this.Refresh();
         }
 
         private void _anchorBottomRight_OnMoved(DraggableAnchor sender, double X, double Y)
@@ -169,7 +169,7 @@ namespace Valhalla.Charting.DrawingObjects
 
             this._anchorTopRight.X = NumericConversion.ToDateTime(X);
             this._anchorBottomLeft.Y = Y;
-            this._plot.Refresh();
+            this.Refresh();
         }
 
         private void _plot_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
@@ -187,6 +187,8 @@ namespace Valhalla.Charting.DrawingObjects
             this._anchorBottomLeft.Y = this._rect.Y1;
 
             this._plot.PointerReleased -= this._plot_PointerReleased;
+
+            //this.IsDraggable = false;
         }
 
         private void _plot_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
@@ -203,7 +205,7 @@ namespace Valhalla.Charting.DrawingObjects
             this._rect.Y1 = mouseLocation.Y;
 
 
-            this._plot.Refresh();
+            this.Refresh();
 
             if (!this._startedToDraw)
             {
