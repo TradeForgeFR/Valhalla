@@ -17,8 +17,12 @@
     </Design.DataContext>
 
   <Grid RowDefinitions="auto,*">
-    <Button Content="rectangle"
-            Command="{Binding StockChart.StartDrawingRectCommand} "/>
+    <StackPanel Orientation="Horizontal">
+      <Button Content="rectangle"
+             Command="{Binding StockChart.StartDrawingRectCommand} "/>
+      <Button Content="rectangle"
+             Command="{Binding StockChart.StartDrawingTrendLineCommand} "/>
+    </StackPanel>
     <ContentControl Content="{Binding StockChart.AvaPlotHost}"
                     Grid.Row="1"/>
   </Grid>

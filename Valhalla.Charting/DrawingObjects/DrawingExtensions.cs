@@ -4,10 +4,16 @@ namespace Valhalla.Charting.DrawingObjects
 {
     public static class DrawingExtensions
     {
-        public static DraggableRectangle StartDrawingDragableRectangle(this AvaPlot plot, double x, double y)
+        public static DraggableRectangle StartDrawingDraggableRectangle(this AvaPlot plot, double x, double y)
         {
             var rectandle = new DraggableRectangle(plot, x, x, y, y);
             return rectandle;
+        }
+
+        public static DraggableTrendLine StartDrawingDraggableTrendLine(this AvaPlot plot, double x, double y)
+        {
+            var line = new DraggableTrendLine(plot, x, x, y, y);
+            return line;
         }
     }
 }

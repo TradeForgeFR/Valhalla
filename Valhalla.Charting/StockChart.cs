@@ -12,7 +12,7 @@ namespace Valhalla.Charting
         #region private
         private AvaPlot _avaplot;
         private Grid _avaPlotHost;
-        private bool _drawingRectangleMode = false;
+        private bool _drawingRectangleMode = false, _drawingTrendLineMode = false;
         #endregion
 
         public StockChart()
@@ -23,9 +23,14 @@ namespace Valhalla.Charting
 
             this.AvaPlot.PointerPressed += Plot_PointerPressed;
 
-            StartDrawingRectCommand = new RelayCommand(() =>
+            this.StartDrawingRectCommand = new RelayCommand(() =>
             {
-                _drawingRectangleMode = true;
+                this._drawingRectangleMode = true;
+            });
+
+            this.StartDrawingTrendLineCommand = new RelayCommand(() =>
+            {
+                this._drawingTrendLineMode = true;
             });
         }
 
@@ -35,6 +40,8 @@ namespace Valhalla.Charting
         public Grid AvaPlotHost { get {  return this._avaPlotHost; } }
 
         public RelayCommand? StartDrawingRectCommand { get; set; }
+
+        public RelayCommand? StartDrawingTrendLineCommand { get; set; }
         #endregion
 
         private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
@@ -45,11 +52,17 @@ namespace Valhalla.Charting
             Pixel mousePixel = new(points.X, points.Y);
             Coordinates mouseLocation = plot!.Plot.GetCoordinates(mousePixel);
 
-            if (_drawingRectangleMode)
+            if (this._drawingRectangleMode)
             {
-                plot!.StartDrawingDragableRectangle(mouseLocation.X, mouseLocation.Y);
+                plot!.StartDrawingDraggableRectangle(mouseLocation.X, mouseLocation.Y);
 
-                _drawingRectangleMode = false;
+                this._drawingRectangleMode = false;
+            }
+            else if (this._drawingTrendLineMode)
+            {
+                plot!.StartDrawingDraggableTrendLine(mouseLocation.X, mouseLocation.Y);
+
+                this._drawingTrendLineMode = false;
             }
         }
     }
