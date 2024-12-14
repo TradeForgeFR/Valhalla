@@ -84,10 +84,20 @@ namespace Valhalla.Charting.DrawingObjects
             set
             {
                 this._rect.IsVisible = value;
-                this._anchorTopLeft.IsVisible = this.IsDraggable;
-                this._anchorTopRight.IsVisible = this.IsDraggable;
-                this._anchorBottomLeft.IsVisible = this.IsDraggable;
-                this._anchorBottomRight.IsVisible = this.IsDraggable;
+                if (value)
+                {
+                    this._anchorTopLeft.IsVisible = this.IsDraggable;
+                    this._anchorTopRight.IsVisible = this.IsDraggable;
+                    this._anchorBottomLeft.IsVisible = this.IsDraggable;
+                    this._anchorBottomRight.IsVisible = this.IsDraggable;
+                }
+                else
+                {
+                    this._anchorTopLeft.IsVisible = false;
+                    this._anchorTopRight.IsVisible = false;
+                    this._anchorBottomLeft.IsVisible = false;
+                    this._anchorBottomRight.IsVisible = false;
+                }
                 this.Refresh();
             }
         }
@@ -138,8 +148,6 @@ namespace Valhalla.Charting.DrawingObjects
 
             this._anchorTopRight.Y = Y;
             this._anchorBottomLeft.X = NumericConversion.ToDateTime(X);
-
-            Debug.WriteLine(NumericConversion.ToDateTime(this._rect.X2));
         }
 
         private void _anchorTopRight_OnMoved(DraggableAnchor sender, double X, double Y)

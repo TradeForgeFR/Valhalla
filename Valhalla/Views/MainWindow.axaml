@@ -20,7 +20,7 @@
     <StackPanel Orientation="Horizontal">
       <Button Content="rectangle"
              Command="{Binding StockChart.StartDrawingRectCommand} "/>
-      <Button Content="rectangle"
+      <Button Content="Trend Line"
              Command="{Binding StockChart.StartDrawingTrendLineCommand} "/>
     </StackPanel>
     <ContentControl Content="{Binding StockChart.AvaPlotHost}"

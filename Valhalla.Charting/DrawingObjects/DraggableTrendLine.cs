@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Valhalla.Charting.DrawingObjects
 {
-    public class DraggableTrendLine : Valhalla.TechnicalAnalysis.DrawingObjects.Rectangle
+    public class DraggableTrendLine : Valhalla.TechnicalAnalysis.DrawingObjects.TrendLine
     {
         #region private fields
         private LinePlot _line;
