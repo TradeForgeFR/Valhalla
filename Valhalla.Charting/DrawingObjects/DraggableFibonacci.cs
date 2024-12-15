@@ -180,8 +180,8 @@ namespace Valhalla.Charting.DrawingObjects
             this._text23.LabelOffsetY = 3;
             this._text23.LabelBold = true;
 
-            this._anchorLeft = new DraggableAnchor(plot, x1, y1, this._mainDraggableLine.LineColor);
-            this._anchorRight = new DraggableAnchor(plot, x2, y2, this._mainDraggableLine.LineColor);
+            this._anchorLeft = new DraggableAnchor(plot, x1, y1, this._topLine.LineColor);
+            this._anchorRight = new DraggableAnchor(plot, x2, y2, this._bottomLine.LineColor);
 
             this._anchorLeft.OnMoved += this._anchorRight_OnMoved;
             this._anchorRight.OnMoved += this._anchorLeft_OnMoved;
@@ -237,19 +237,21 @@ namespace Valhalla.Charting.DrawingObjects
 
         public override void Refresh()
         {
-            var min = Math.Min(this._anchorRight.Y, this._anchorLeft.Y);
-            var max = Math.Max(this._anchorRight.Y, this._anchorLeft.Y);
-            var middle = (min+max) / 2;
-            var level76 = min + ((max - min) / 100) * 76.4;
-            var level61 = min + ((max - min) / 100) * 61.8;
-            var level38 = min + ((max - min) / 100) * 38.2;
-            var level23 = min + ((max - min) / 100) * 23.6;
+            var priceA = this._anchorRight.Y; 
+            var priceB = this._anchorLeft.Y; 
+            var middle = (priceA+priceB) / 2;
+            var left = Math.Min(NumericConversion.ToNumber(this._anchorRight.X), NumericConversion.ToNumber(this._anchorLeft.X));
 
-            this._bottomLine.Start = new(NumericConversion.ToNumber(this._anchorLeft.X), min);
-            this._bottomLine.End = new(NumericConversion.ToNumber(this._anchorRight.X), min);
+            var level76 = priceA + ((priceB - priceA) / 100) * 76.4;
+            var level61 = priceA + ((priceB - priceA) / 100) * 61.8;
+            var level38 = priceA + ((priceB - priceA) / 100) * 38.2;
+            var level23 = priceA + ((priceB - priceA) / 100) * 23.6;
 
-            this._topLine.Start = new(NumericConversion.ToNumber(this._anchorLeft.X), max);
-            this._topLine.End = new(NumericConversion.ToNumber(this._anchorRight.X), max);
+            this._bottomLine.Start = new(NumericConversion.ToNumber(this._anchorLeft.X), priceA);
+            this._bottomLine.End = new(NumericConversion.ToNumber(this._anchorRight.X), priceA);
+
+            this._topLine.Start = new(NumericConversion.ToNumber(this._anchorLeft.X), priceB);
+            this._topLine.End = new(NumericConversion.ToNumber(this._anchorRight.X), priceB);
 
             this._middleLine.Start = new(NumericConversion.ToNumber(this._anchorLeft.X), middle);
             this._middleLine.End = new(NumericConversion.ToNumber(this._anchorRight.X), middle);
@@ -266,25 +268,25 @@ namespace Valhalla.Charting.DrawingObjects
             this._line23.Start = new(NumericConversion.ToNumber(this._anchorLeft.X), level23);
             this._line23.End = new(NumericConversion.ToNumber(this._anchorRight.X), level23);
 
-            this._topText.Location = new(NumericConversion.ToNumber(this._anchorLeft.X), max);
-            this._topText.LabelText = $"100,00 % ({Math.Round(max,3)})";
+            this._topText.Location = new(left, priceB);
+            this._topText.LabelText = $"100,00 % ({Math.Round(priceB,3)})";
 
-            this._middleText.Location = new(NumericConversion.ToNumber(this._anchorLeft.X), middle);
+            this._middleText.Location = new(left, middle);
             this._middleText.LabelText = $"50,00 % ({Math.Round(middle, 3)})";
 
-            this._bottomText.Location = new(NumericConversion.ToNumber(this._anchorLeft.X), min);
-            this._bottomText.LabelText = $"0,00 % ({Math.Round(min, 3)})";
+            this._bottomText.Location = new(left, priceA);
+            this._bottomText.LabelText = $"0,00 % ({Math.Round(priceA, 3)})";
 
-            this._text76.Location = new(NumericConversion.ToNumber(this._anchorLeft.X), level76);
+            this._text76.Location = new(left, level76);
             this._text76.LabelText = $"76,40 % ({Math.Round(level76, 3)})";
 
-            this._text61.Location = new(NumericConversion.ToNumber(this._anchorLeft.X), level61);
+            this._text61.Location = new(left, level61);
             this._text61.LabelText = $"61,80 % ({Math.Round(level61, 3)})";
 
-            this._text38.Location = new(NumericConversion.ToNumber(this._anchorLeft.X), level38);
+            this._text38.Location = new(left, level38);
             this._text38.LabelText = $"38,20 % ({Math.Round(level38, 3)})";
 
-            this._text23.Location = new(NumericConversion.ToNumber(this._anchorLeft.X), level23);
+            this._text23.Location = new(left, level23);
             this._text23.LabelText = $"23,60 % ({Math.Round(level23, 3)})";
 
             this._plot.Refresh();
