@@ -225,6 +225,8 @@ namespace Valhalla.Charting.DrawingObjects
             Coordinates mouseLocation = this._plot.Plot.GetCoordinates(mousePixel);
 
             this._mainDraggableLine.End = new(mouseLocation.X, mouseLocation.Y);
+            this._anchorRight.X = this.X2;
+            this._anchorRight.Y = this.Y2;
 
             this.Refresh();
 
