@@ -17,5 +17,12 @@ namespace Valhalla.Charting.DrawingObjects
             var line = new DraggableTrendLine(plot, x, x, y, y);
             return line;
         }
+
+        public static DraggableFibonacci StartDrawingDraggableFibonacci(this AvaPlot plot, double x, double y)
+        {
+            plot.UserInputProcessor.Disable();
+            var fiblo = new DraggableFibonacci(plot, x, x, y, y);
+            return fiblo;
+        }
     }
 }

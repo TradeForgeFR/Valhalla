@@ -26,6 +26,8 @@
              Command="{Binding StockChart.DrawingObjectsManager.StartDrawingRectCommand} "/>
       <Button Content="Trend Line"
              Command="{Binding StockChart.DrawingObjectsManager.StartDrawingTrendLineCommand} "/>
+      <Button Content="Fibo"
+            Command="{Binding StockChart.DrawingObjectsManager.StartDrawingFibonacciCommand} "/>
     </StackPanel>
     <ContentControl Content="{Binding StockChart.AvaPlotHost}"
                     Grid.Row="1"/>

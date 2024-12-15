@@ -11,7 +11,7 @@ namespace Valhalla.Charting.Managers
     public class DrawingObjectsManager : ReactiveObject
     {
         #region private
-        private bool _drawingRectangleMode = false, _drawingTrendLineMode = false;
+        private bool _drawingRectangleMode = false, _drawingTrendLineMode = false, _drawingFibonacciMode = false;
         private List<AvaPlot> _plots = new List<AvaPlot>();
         private List<IPlottableContainer> _IPlottableContainer = new List<IPlottableContainer>();
         #endregion
@@ -28,11 +28,16 @@ namespace Valhalla.Charting.Managers
                 this._drawingTrendLineMode = true;
             });
 
+            this.StartDrawingFibonacciCommand = new RelayCommand(() =>
+            {
+                this._drawingFibonacciMode = true;
+            });
+
             this.ClearDrawingObjectsCommand = new RelayCommand(() =>
             {
                 foreach(var plot in this._IPlottableContainer)
                 {
-                    (plot as IPlottableContainer).RemovePlottables();
+                    (plot as IPlottableContainer)?.RemovePlottables();
                 }
             });
         }
@@ -48,11 +53,10 @@ namespace Valhalla.Charting.Managers
 
         public RelayCommand? ClearDrawingObjectsCommand { get; set; }
 
-        private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
-        {
-            if (!this._drawingRectangleMode && !this._drawingTrendLineMode)
-                return;
+        public RelayCommand? StartDrawingFibonacciCommand { get; set; }
 
+        private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+        {  
             var plot = sender as AvaPlot;
             var points = e.GetPosition(plot);
 
@@ -72,6 +76,13 @@ namespace Valhalla.Charting.Managers
                 this._IPlottableContainer.Add(trendLine);
 
                 this._drawingTrendLineMode = false;
+            }
+            else if (this._drawingFibonacciMode)
+            {
+                var fibo = plot!.StartDrawingDraggableFibonacci(mouseLocation.X, mouseLocation.Y);
+                this._IPlottableContainer.Add(fibo);
+
+                this._drawingFibonacciMode = false;
             }
         }
     }
