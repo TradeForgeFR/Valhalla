@@ -10,7 +10,7 @@ namespace Valhalla.Charting.DrawingObjects
     {
         #region private fields
         private LinePlot _line;
-        private bool _inCreationMode = true;
+        private bool _inCreationMode = false;
         private bool _startedToDraw = false;
         private AvaPlot _plot;
         private DraggableAnchor _anchorLeft, _anchorRight;
@@ -106,19 +106,24 @@ namespace Valhalla.Charting.DrawingObjects
             }
         }
         #endregion
-        public DraggableTrendLine(AvaPlot plot, double x1, double x2, double y1, double y2)
+        public DraggableTrendLine(AvaPlot plot, double x1, double x2, double y1, double y2, bool isManualDrawingMode = true)
         {
             this._plot = plot;
 
             this._line = this._plot.Plot.Add.Line(x1, y1, x2, y2);
-            this._plot.PointerMoved += this._plot_PointerMoved;
+            this._line.LineWidth = 2;
 
             this._anchorLeft = new DraggableAnchor(plot, x1, y1, this._line.LineColor); 
             this._anchorRight = new DraggableAnchor(plot, x2, y2, this._line.LineColor); 
 
             this._anchorLeft.OnMoved += this._anchorRight_OnMoved;
             this._anchorRight.OnMoved += this._anchorLeft_OnMoved;
-            this._inCreationMode = true;
+
+            if (isManualDrawingMode)
+            {
+                this._inCreationMode = isManualDrawingMode;
+                this._plot.PointerMoved += this._plot_PointerMoved;
+            }            
         }
 
         private void _anchorLeft_OnMoved(DraggableAnchor sender, double X, double Y)
@@ -143,6 +148,8 @@ namespace Valhalla.Charting.DrawingObjects
 
             this._anchorRight.X = this.X2;
             this._anchorRight.Y = this.Y2;
+
+            this._plot.UserInputProcessor.Enable();
         }
 
         private void _plot_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)

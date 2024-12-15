@@ -1,7 +1,6 @@
 ﻿using ScottPlot.Avalonia;
 using ScottPlot.Plottables;
 using ScottPlot;
-using System.Diagnostics;
 using Valhalla.Charting.Interfaces;
 
 namespace Valhalla.Charting.DrawingObjects
@@ -10,7 +9,7 @@ namespace Valhalla.Charting.DrawingObjects
     {
         #region private fields
         private Rectangle _rect;
-        private bool _inCreationMode = true;
+        private bool _inCreationMode = false;
         private bool _startedToDraw = false;
         private AvaPlot _plot;
         private DraggableAnchor _anchorTopRight, _anchorTopLeft, _anchorBottomRight, _anchorBottomLeft;
@@ -122,12 +121,11 @@ namespace Valhalla.Charting.DrawingObjects
             }
         }
         #endregion
-        public DraggableRectangle(AvaPlot plot, double x1, double x2, double y1, double y2)
+        public DraggableRectangle(AvaPlot plot, double x1, double x2, double y1, double y2, bool isManualDrawingMode = true)
         {
             this._plot = plot;
 
-            this._rect = this._plot.Plot.Add.Rectangle(x1, x2, y1, y2);
-            this._plot.PointerMoved += this._plot_PointerMoved;
+            this._rect = this._plot.Plot.Add.Rectangle(x1, x2, y1, y2);           
 
             this._anchorTopRight = new DraggableAnchor(plot, x1, y1, this._rect.LineColor);
             this._anchorBottomRight = new DraggableAnchor(plot, x1, y1, this._rect.LineColor);
@@ -138,7 +136,12 @@ namespace Valhalla.Charting.DrawingObjects
             this._anchorBottomLeft.OnMoved += this._anchorBottomLeft_OnMoved1;
             this._anchorTopRight.OnMoved += this._anchorTopRight_OnMoved;
             this._anchorTopLeft.OnMoved += this._anchorTopLeft_OnMoved;
-            this._inCreationMode = true;           
+
+            if (isManualDrawingMode)
+            {
+                this._inCreationMode = true;
+                this._plot.PointerMoved += this._plot_PointerMoved;
+            }              
         }
 
         private void _anchorTopLeft_OnMoved(DraggableAnchor sender, double X, double Y)
@@ -196,6 +199,7 @@ namespace Valhalla.Charting.DrawingObjects
 
             this._plot.PointerReleased -= this._plot_PointerReleased;
 
+            this._plot.UserInputProcessor.Enable();
             //this.IsDraggable = false;
         }
 

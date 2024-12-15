@@ -40,6 +40,7 @@ namespace Valhalla.Charting.DrawingObjects
         private void Plot_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
             this._indexBeingDragged = null;
+
             this._plot.UserInputProcessor.Enable();
             this._plot.Refresh();
         }

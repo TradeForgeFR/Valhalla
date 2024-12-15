@@ -23,7 +23,7 @@ namespace Valhalla.ViewModels
 
         public async Task FillTheChart()
         {
-            var request = await this._binanceClient.SpotApi.ExchangeData.GetUIKlinesAsync("BTCUSDT", Binance.Net.Enums.KlineInterval.OneHour, limit: 2000);
+            var request = await this._binanceClient.SpotApi.ExchangeData.GetUIKlinesAsync("XRPUSDT", Binance.Net.Enums.KlineInterval.OneHour, limit: 2000);
 
             if (request.Success)
             {
