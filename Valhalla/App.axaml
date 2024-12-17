@@ -17,5 +17,6 @@
         <StyleInclude Source="avares://SukiUI.Dock/Index.axaml" />
         <sukiUi:SukiTheme ThemeColor="Blue"/>
         <avalonia:MaterialIconStyles />
+        <StyleInclude Source="/Styles/Index.axaml" />
     </Application.Styles>
 </Application>

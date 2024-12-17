@@ -8,7 +8,9 @@
                    x:Class="Valhalla.Views.MainWindow"
                    x:DataType="vm:MainWindowViewModel"
                    Icon="/Assets/avalonia-logo.ico"
-                   Title="Valhalla">
+                   Title="Valhalla"
+                   ExtendClientAreaToDecorationsHint="False"
+                   IsTitleBarVisible="False">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
