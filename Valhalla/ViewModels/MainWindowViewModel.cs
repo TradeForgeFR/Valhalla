@@ -34,9 +34,7 @@ namespace Valhalla.ViewModels
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    this.StockChart.AvaPlot.Plot.Add.Candlestick(bars);
-                    this.StockChart.AvaPlot.Plot.Axes.DateTimeTicksBottom();
-                    this.StockChart.AvaPlot.Plot.PlotControl!.Refresh();
+                    this._stockChart.FillPrice(bars);
                 }, DispatcherPriority.Background);
             }
             else
