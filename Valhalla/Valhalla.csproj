@@ -29,6 +29,7 @@
     <PackageReference Include="Dock.Avalonia" Version="11.2.0" />
     <PackageReference Include="Dock.Model.Mvvm" Version="11.2.0" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
+    <PackageReference Include="NetMQ" Version="4.0.1.13" />
     <PackageReference Include="ScottPlot" Version="5.0.47" />
     <PackageReference Include="ScottPlot.Avalonia" Version="5.0.47" />
     <PackageReference Include="SukiUI.Dock" Version="6.0.0-rc" />
