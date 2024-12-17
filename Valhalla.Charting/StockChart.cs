@@ -42,8 +42,10 @@ namespace Valhalla.Charting
             this.AvaPlot.Plot.Axes.AddBottomAxis(customeXAxis);
             OHLCSourceList dataSource = new(bars.ToList());
             this._priceSerie = new PriceSerie(dataSource);
+
             this.AvaPlot.Plot.Add.Plottable(this._priceSerie);
-           
+
+            this.AvaPlot.Plot.Axes.AutoScale();
 
             this.AvaPlot.Plot.PlotControl!.Refresh();
         }
