@@ -36,10 +36,15 @@ namespace Valhalla.Charting
 
         public void FillPrice(OHLC[] bars)
         {
+            var customeXAxis = new ValhallaDateTimeXAxis();
+
+            this.AvaPlot.Plot.Axes.Remove(Edge.Bottom);
+            this.AvaPlot.Plot.Axes.AddBottomAxis(customeXAxis);
             OHLCSourceList dataSource = new(bars.ToList());
             this._priceSerie = new PriceSerie(dataSource);
             this.AvaPlot.Plot.Add.Plottable(this._priceSerie);
-            this.AvaPlot.Plot.Axes.DateTimeTicksBottom();
+           
+
             this.AvaPlot.Plot.PlotControl!.Refresh();
         }
     }
