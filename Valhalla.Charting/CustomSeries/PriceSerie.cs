@@ -27,7 +27,7 @@ namespace Valhalla.Charting.CustomSeries
         /// <summary>
         /// Fractional width of the candle symbol relative to its time span
         /// </summary>
-        public double SymbolWidth = .8;
+        public double SymbolWidth = .05;
 
         public LineStyle RisingLineStyle { get; } = new()
         {
