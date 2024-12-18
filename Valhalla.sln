@@ -11,11 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.Interfaces", "Valh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.Charting", "Valhalla.Charting\Valhalla.Charting.csproj", "{15143660-8089-48F3-8F1F-4C79A37FBFBF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing Apps", "Testing Apps", "{C0ECC00B-342B-4A99-864D-228D3E1E1862}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCharting", "TestCharting\TestCharting.csproj", "{CA7062C6-DD5C-4AAA-8B40-4B36A3132958}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.TechnicalAnalysis", "Valhalla.TechnicalAnalysis\Valhalla.TechnicalAnalysis.csproj", "{A8E5F884-5947-4986-8066-CC727AEAC3FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.TechnicalAnalysis", "Valhalla.TechnicalAnalysis\Valhalla.TechnicalAnalysis.csproj", "{A8E5F884-5947-4986-8066-CC727AEAC3FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +35,6 @@ Global
 		{15143660-8089-48F3-8F1F-4C79A37FBFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15143660-8089-48F3-8F1F-4C79A37FBFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15143660-8089-48F3-8F1F-4C79A37FBFBF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA7062C6-DD5C-4AAA-8B40-4B36A3132958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA7062C6-DD5C-4AAA-8B40-4B36A3132958}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA7062C6-DD5C-4AAA-8B40-4B36A3132958}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA7062C6-DD5C-4AAA-8B40-4B36A3132958}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A8E5F884-5947-4986-8066-CC727AEAC3FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A8E5F884-5947-4986-8066-CC727AEAC3FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8E5F884-5947-4986-8066-CC727AEAC3FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,9 +42,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{CA7062C6-DD5C-4AAA-8B40-4B36A3132958} = {C0ECC00B-342B-4A99-864D-228D3E1E1862}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {700DF32B-8A77-4945-B4BE-A0FBC6E8519D}
