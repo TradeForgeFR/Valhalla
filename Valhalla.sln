@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.Interfaces", "Valh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.Charting", "Valhalla.Charting\Valhalla.Charting.csproj", "{15143660-8089-48F3-8F1F-4C79A37FBFBF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.TechnicalAnalysis", "Valhalla.TechnicalAnalysis\Valhalla.TechnicalAnalysis.csproj", "{A8E5F884-5947-4986-8066-CC727AEAC3FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{15143660-8089-48F3-8F1F-4C79A37FBFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15143660-8089-48F3-8F1F-4C79A37FBFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15143660-8089-48F3-8F1F-4C79A37FBFBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8E5F884-5947-4986-8066-CC727AEAC3FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8E5F884-5947-4986-8066-CC727AEAC3FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8E5F884-5947-4986-8066-CC727AEAC3FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8E5F884-5947-4986-8066-CC727AEAC3FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

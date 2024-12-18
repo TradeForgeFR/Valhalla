@@ -1,9 +1,10 @@
 ﻿using Avalonia.Controls;
-using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
 using ScottPlot;
 using ScottPlot.Avalonia;
-using Valhalla.Charting.ScottPlotExtensions;
+using ScottPlot.DataSources;
+using Valhalla.Charting.CustomSeries;
+using Valhalla.Charting.Managers;
 
 namespace Valhalla.Charting
 {
@@ -11,8 +12,8 @@ namespace Valhalla.Charting
     {
         #region private
         private AvaPlot _avaplot;
+        private PriceSerie _priceSerie;
         private Grid _avaPlotHost;
-        private bool _drawingRectangleMode = false;
         #endregion
 
         public StockChart()
@@ -20,39 +21,33 @@ namespace Valhalla.Charting
             this._avaplot = new AvaPlot();
             this._avaPlotHost = new Grid();
             this._avaPlotHost.Children.Add(this._avaplot);
-
-            this.AvaPlot.PointerPressed += Plot_PointerPressed;
-
-            StartDrawingRectCommand = new RelayCommand(() =>
-            {
-                _drawingRectangleMode = true;
-            });
+            this.DrawingObjectsManager.AddPlot(this._avaplot);
         }
 
         #region Public Fields
         public AvaPlot AvaPlot { get { return this._avaplot; } }
 
-        public Grid AvaPlotHost { get {  return this._avaPlotHost; } }
+        public Grid AvaPlotHost { get {  return this._avaPlotHost; } } 
 
-        public RelayCommand? StartDrawingRectCommand { get; set; }
+        public DrawingObjectsManager DrawingObjectsManager { get; } = new DrawingObjectsManager();
+
+        public PriceSerie PriceSerie { get {  return this._priceSerie; } }
         #endregion
 
-        private void Plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+        public void FillPrice(OHLC[] bars)
         {
-            var plot = sender as AvaPlot;
-            var points = e.GetPosition(plot);
+            var customeXAxis = new ValhallaDateTimeXAxis();
 
-            Pixel mousePixel = new(points.X, points.Y);
-            Coordinates mouseLocation = plot!.Plot.GetCoordinates(mousePixel);
+            this.AvaPlot.Plot.Axes.Remove(Edge.Bottom);
+            this.AvaPlot.Plot.Axes.AddBottomAxis(customeXAxis);
+            OHLCSourceList dataSource = new(bars.ToList());
+            this._priceSerie = new PriceSerie(dataSource);
 
-            if (_drawingRectangleMode)
-            {
-                plot!.StartDrawingDragableRectangle(mouseLocation.X, mouseLocation.Y);
+            this.AvaPlot.Plot.Add.Plottable(this._priceSerie);
 
-                _drawingRectangleMode = false;
-            }
+            this.AvaPlot.Plot.Axes.AutoScale();
+
+            this.AvaPlot.Plot.PlotControl!.Refresh();
         }
-
-
     }
 }

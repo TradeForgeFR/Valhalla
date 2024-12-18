@@ -4,8 +4,7 @@
              xmlns:vm="using:Valhalla.ViewModels"
              x:DataType="vm:Documents.ChartViewModel">
     <Grid RowDefinitions="auto,*">
-        <Button Content="rectangle"
-                Command="{Binding StockChart.StartDrawingRectCommand} "/>
+        <Button Content="rectangle" Command="{Binding StockChart.DrawingObjectsManager.StartDrawingRectCommand} "/> 
         <ContentControl Content="{Binding StockChart.AvaPlotHost}" Grid.Row="1"/>
     </Grid>
 </UserControl>
