@@ -1,111 +1,47 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Valhalla.ViewModels.Documents;
-
-using Dock.Model.Controls;
-using Dock.Model.Core;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using Avalonia.Threading;
+using ScottPlot;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Valhalla.Charting;
+using Binance.Net.Clients;
+using System.Linq;
+using System;
 
 namespace Valhalla.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly IFactory? _factory;
-        private IRootDock? _layout;
+        #region private fields
+        private StockChart _stockChart = new StockChart();
+        private BinanceSocketClient _binanceClient = new BinanceSocketClient();        
+        #endregion
 
+        #region public fields
+        public StockChart StockChart { get {  return _stockChart; } }       
+        #endregion
 
-        public IRootDock? Layout
+        public async Task FillTheChart()
         {
-            get => _layout;
-            set => _layout = value;
-        }
+            var request = await this._binanceClient.SpotApi.ExchangeData.GetUIKlinesAsync("XRPUSDT", Binance.Net.Enums.KlineInterval.OneHour, limit: 2000);
 
-        public MainWindowViewModel()
-        {
-            _factory = new ValhallaFactory();
-
-            Layout = _factory?.CreateLayout();
-            if (Layout is { })
+            if (request.Success)
             {
-                _factory?.InitLayout(Layout);
-            }
+                var bars = request.Data.Result.Select(x => new OHLC((double)x.OpenPrice, (double)x.HighPrice, (double)x.LowPrice, (double)x.ClosePrice, x.OpenTime, TimeSpan.FromMinutes(60))).ToArray();
 
-        }
+                List<OHLC> prices = new();
+                var socket = new BinanceSocketClient();
 
-        private ChartViewModel OpenChartViewModel(string symbol)
-        {
-            string title = "Chart - " + symbol;
-
-            return new ChartViewModel()
-            {
-                Title = title,
-            };
-        }
-
-        private void UpdateChartViewModel(ChartViewModel chartViewModel, string symbol)
-        {
-            chartViewModel.Title = "Chart - " + symbol;
-        }
-
-        private void AddchartViewModel(ChartViewModel chartViewModel)
-        {
-            var charts = _factory?.GetDockable<IDocumentDock>("Charts");
-            if (Layout is { } && charts is { })
-            {
-                _factory?.AddDockable(charts, chartViewModel);
-                _factory?.SetActiveDockable(chartViewModel);
-                _factory?.SetFocusedDockable(Layout, chartViewModel);
-            }
-        }
-
-        private ChartViewModel? GetChartViewModel()
-        {
-            var files = _factory?.GetDockable<IDocumentDock>("Charts");
-            return files?.ActiveDockable as ChartViewModel;
-        }
-
-        private ChartViewModel GetUntitledChartViewModel()
-        {
-            return new ChartViewModel()
-            {
-                Title = "Chart - Untitled"
-            };
-        }
-
-        public void CloseLayout()
-        {
-            if (Layout is IDock dock)
-            {
-                if (dock.Close.CanExecute(null))
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    dock.Close.Execute(null);
-                }
+                    this._stockChart.FillPrice(bars);
+                }, DispatcherPriority.Background);
             }
-        }
-
-        public void ChartNew()
-        {
-            var untitledchartViewModel = GetUntitledChartViewModel();
-            AddchartViewModel(untitledchartViewModel);
-        }
-
-        public void ChartExit()
-        {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+            else
             {
-                desktopLifetime.Shutdown();
+                Debug.WriteLine("error");
             }
-        }
-
-        private Window? GetWindow()
-        {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-            {
-                return desktopLifetime.MainWindow;
-            }
-            return null;
-        }
-
+        } 
+       
     }
 }
