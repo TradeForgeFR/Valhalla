@@ -1,35 +1,21 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Valhalla.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Valhalla.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        xmlns:ScottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
-        Title="Valhalla">
+<sukiUi:SukiWindow xmlns="https://github.com/avaloniaui"
+                   xmlns:sukiUi="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:vm="using:Valhalla.ViewModels"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                   x:Class="Valhalla.Views.MainWindow"
+                   x:DataType="vm:MainWindowViewModel"
+                   Icon="/Assets/avalonia-logo.ico"
+                   Title="Valhalla"
+                   ExtendClientAreaToDecorationsHint="False"
+                   IsTitleBarVisible="False">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
-
-  <Grid RowDefinitions="auto,*">
-    <StackPanel Orientation="Horizontal">
-      <Button Background="Red"
-              Command="{Binding StockChart.DrawingObjectsManager.ClearDrawingObjectsCommand} "
-              Foreground="White"
-              Content="Clear"/>
-      <Button Content="rectangle"
-             Command="{Binding StockChart.DrawingObjectsManager.StartDrawingRectCommand} "/>
-      <Button Content="Trend Line"
-             Command="{Binding StockChart.DrawingObjectsManager.StartDrawingTrendLineCommand} "/>
-      <Button Content="Fibo"
-            Command="{Binding StockChart.DrawingObjectsManager.StartDrawingFibonacciCommand} "/>
-    </StackPanel>
-    <ContentControl Content="{Binding StockChart.AvaPlotHost}"
-                    Grid.Row="1"/>
-  </Grid>
-</Window>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+  <DockControl Layout="{Binding Layout}" Margin="4" />
+</sukiUi:SukiWindow>
