@@ -1,17 +1,19 @@
 ﻿using ScottPlot.Avalonia;
 using ScottPlot.Plottables;
 using ScottPlot;
+using Valhalla.TechnicalAnalysis.Interfaces;
 
-namespace Valhalla.Charting.ScottPlotExtensions
+namespace Valhalla.Charting.DrawingObjects
 {
-    public delegate void AnchorMovedHandler(DragableAnchor sender, double X, double Y);
-    public class DragableAnchor
+    public delegate void AnchorMovedHandler(DraggableAnchor sender, double X, double Y);
+    public class DraggableAnchor : IDrawingObject, ISingleCoordinateDrawingObject
     {
         #region private fields
         private AvaPlot _plot;
         private int? _indexBeingDragged;
         private double[] _xs;
         private double[] _ys;
+        private bool _isDraggable = true;
         #endregion
 
         #region public fields
@@ -19,8 +21,7 @@ namespace Valhalla.Charting.ScottPlotExtensions
         public event AnchorMovedHandler? OnMoved;
         #endregion
 
-
-        public DragableAnchor(AvaPlot plot, double x, double y, ScottPlot.Color color)
+        public DraggableAnchor(AvaPlot plot, double x, double y, ScottPlot.Color color)
         {
             this._xs = [x];
             this._ys = [y];
@@ -39,6 +40,7 @@ namespace Valhalla.Charting.ScottPlotExtensions
         private void Plot_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
             this._indexBeingDragged = null;
+
             this._plot.UserInputProcessor.Enable();
             this._plot.Refresh();
         }
@@ -62,6 +64,8 @@ namespace Valhalla.Charting.ScottPlotExtensions
         }
         private void _plot_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
         {
+            if(!this.IsDraggable) return;
+
             var points = e.GetPosition(this._plot);
 
             Pixel mousePixel = new(points.X, points.Y);
@@ -73,15 +77,20 @@ namespace Valhalla.Charting.ScottPlotExtensions
                 this._plot.UserInputProcessor.Disable();
         }
 
-        public double X
+        public void Refresh()
+        {
+            this._plot.Refresh();
+        }
+
+        public DateTime X
         {
             get
             {
-                return this._xs[0];
+                return NumericConversion.ToDateTime(this._xs[0]);
             }
             set
             {
-                this._xs[0] = value;
+                this._xs[0] = NumericConversion.ToNumber(value); 
                 this._plot.Refresh();
             }
         }
@@ -97,6 +106,35 @@ namespace Valhalla.Charting.ScottPlotExtensions
                 this._ys[0] = value;
                 this._plot.Refresh();
             }
+        }
+
+        public string Name { get; set; }
+        public bool IsVisible
+        {
+            get
+            {
+                return this.Scatter!.IsVisible;
+            }
+            set
+            {
+                this.Scatter!.IsVisible = value;
+            }
+        }
+        public bool IsDraggable
+        {
+            get
+            {
+                return this._isDraggable;
+            }
+            set
+            {
+                this._isDraggable = value;
+            }
+        }
+
+        public Scatter Plottable
+        {
+            get => this.Scatter!;
         }
     }
 }
