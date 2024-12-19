@@ -3,8 +3,9 @@ using SkiaSharp;
 
 namespace Valhalla.Charting.CustomSeries
 {
-    public class PriceSerie(IOHLCSource data) : IPlottable
+    public class PriceSerie(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
     {
+        public List<List<TickAnalysis>> Ticks { get; } = ticks;
         public bool IsVisible { get; set; } = true;
 
         public IAxes Axes { get; set; } = new Axes();
@@ -203,19 +204,39 @@ namespace Valhalla.Charting.CustomSeries
                         // fill the body
                         fillStyle.Render(rp.Canvas, rect, paint);
 
-                        halfWidthNumber = ohlc.TimeSpan.TotalDays * .9;
-
-                        var maxRight = Axes.GetPixelX(centerNumber + halfWidthNumber);
-                        xPxRange = new(xPxRight + (float)5, maxRight);
-                        yPxRange= new(top,bottom);
-                        var range = yPxRange.Span / 10;
-                        rect = new(xPxRange, yPxRange);
+                        var right = ohlc.TimeSpan.TotalDays * .91;
+                        var left = xPxRight + (float)2;
+                        var maxRight = Axes.GetPixelX(centerNumber + right);
+                        
                         FillStyle rangeStyle = new FillStyle()
                         {
                             Color = Colors.Black
                         };
+                         
+                        
+                        var tradeList = this.Ticks[i];
+                        int tickCount = tradeList.Count-1;
+                        var tickRange = (top - bottom) / tickCount;
+                        var bigestVolume = tradeList.Max(x => x.Volume);
+                        var startPrice = top+(tickRange/2);
+                        for (int x =0; x<=tickCount; x++)
+                        {
+                            if (tradeList[x].Volume== bigestVolume)
+                                rangeStyle.Color = Colors.Red;
+                            else
+                                rangeStyle.Color = Colors.Gray;
 
-                        rangeStyle.Render(rp.Canvas, rect, paint);
+                            var ratio = Math.Abs(.91 * (tradeList[x].Volume / bigestVolume));
+                            right = ohlc.TimeSpan.TotalDays * ratio;
+                            maxRight = Axes.GetPixelX(centerNumber + right);
+
+                            yPxRange = new(startPrice, startPrice-tickRange);
+                            xPxRange = new(left, maxRight < left ? left + (left - maxRight) : maxRight);
+                            rect = new(xPxRange, yPxRange);                          
+                            rangeStyle.Render(rp.Canvas, rect, paint);
+                            startPrice -= tickRange;
+                        }
+                       
                     }
                     else
                     {
