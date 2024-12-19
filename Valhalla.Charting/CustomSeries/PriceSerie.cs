@@ -20,24 +20,24 @@ namespace Valhalla.Charting.CustomSeries
 
         public LineStyle RisingLineStyle { get; } = new()
         {
-            Color = Color.FromHex("#089981"),
+            Color = Colors.Black,//Color.FromHex("#089981"),
             Width = 1,
         };
 
         public LineStyle FallingLineStyle { get; } = new()
         {
-            Color = Color.FromHex("#f23645"),
+            Color = Colors.Black,//Color.FromHex("#f23645"),
             Width = 1,
         };
 
         public FillStyle RisingFillStyle { get; } = new()
         {
-            Color = Color.FromHex("#089981"),
+            Color = Color.FromHex("#5fa8b7"),
         };
 
         public FillStyle FallingFillStyle { get; } = new()
         {
-            Color = Color.FromHex("#f23645"),
+            Color = Color.FromHex("#e85c58"),
         };
 
         public Color RisingColor
@@ -191,7 +191,7 @@ namespace Valhalla.Charting.CustomSeries
                 // low/high line
                 PixelLine verticalLine = new(center, top, center, bottom);
                 Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
-
+               
                 // open/close body
                 bool barIsAtLeastOnePixelWide = xPxRight - xPxLeft > 1;
                 if (barIsAtLeastOnePixelWide)
@@ -204,6 +204,16 @@ namespace Valhalla.Charting.CustomSeries
                         // fill the body
                         fillStyle.Render(rp.Canvas, rect, paint);
 
+                        verticalLine = new PixelLine(xPxLeft, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxRight, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Open));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Close), xPxLeft, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+
+                        // start drawing the right value area
                         var right = ohlc.TimeSpan.TotalDays * .91;
                         var left = xPxRight + (float)2;
                         var maxRight = Axes.GetPixelX(centerNumber + right);
@@ -222,9 +232,9 @@ namespace Valhalla.Charting.CustomSeries
                         for (int x =0; x<=tickCount; x++)
                         {
                             if (tradeList[x].Volume== bigestVolume)
-                                rangeStyle.Color = Colors.Red;
+                                rangeStyle.Color = Colors.Orange;
                             else
-                                rangeStyle.Color = Colors.Gray;
+                                rangeStyle.Color = Colors.Gray.WithOpacity(0.2);
 
                             var ratio = Math.Abs(.91 * (tradeList[x].Volume / bigestVolume));
                             right = ohlc.TimeSpan.TotalDays * ratio;
