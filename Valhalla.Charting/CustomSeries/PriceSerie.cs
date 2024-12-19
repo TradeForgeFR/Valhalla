@@ -12,6 +12,7 @@ namespace Valhalla.Charting.CustomSeries
 
         public IOHLCSource Data { get; } = data;
 
+        public bool UseVolumetric { get; set; } = false;
 
         /// <summary>
         /// Fractional width of the candle symbol relative to its time span
@@ -98,9 +99,14 @@ namespace Valhalla.Charting.CustomSeries
 
         public virtual void Render(RenderPack rp)
         {
-           // this.DrawCandles(rp);
-
-            this.DrawCandlesWithArea(rp);
+            if (UseVolumetric)
+            {
+                this.DrawCandlesWithArea(rp);
+            }
+            else
+            {
+                this.DrawCandles(rp);
+            }
         }
 
         private void DrawCandles(RenderPack rp)
@@ -147,7 +153,18 @@ namespace Valhalla.Charting.CustomSeries
                     PixelRect rect = new(xPxRange, yPxRange);
                     if (yPxOpen != yPxClose)
                     {
-                        fillStyle.Render(rp.Canvas, rect, paint); 
+                        // fill body
+                        fillStyle.Render(rp.Canvas, rect, paint);
+
+                        // border the body
+                        verticalLine = new PixelLine(xPxLeft, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxRight, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Open));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Close), xPxLeft, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
                     }
                     else
                     {

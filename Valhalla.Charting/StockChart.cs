@@ -32,6 +32,17 @@ namespace Valhalla.Charting
         public DrawingObjectsManager DrawingObjectsManager { get; } = new DrawingObjectsManager();
 
         public PriceSerie PriceSerie { get {  return this._priceSerie; } }
+
+        public bool? UseVolumetric
+        {
+            get => this._priceSerie?.UseVolumetric;
+            set
+            {
+                this._priceSerie!.UseVolumetric = value!.Value;
+                this.AvaPlot.Refresh();
+                this.RaisePropertyChanged(nameof(UseVolumetric));
+            }
+        }
         #endregion
 
         public void FillPrice(OHLC[] bars)
