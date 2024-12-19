@@ -15,18 +15,18 @@ namespace Valhalla.Charting.CustomSeries
         /// <summary>
         /// Fractional width of the candle symbol relative to its time span
         /// </summary>
-        public double SymbolWidth = 0.05;
+        public double SymbolWidth = 0.1;
 
         public LineStyle RisingLineStyle { get; } = new()
         {
             Color = Color.FromHex("#089981"),
-            Width = 2,
+            Width = 1,
         };
 
         public LineStyle FallingLineStyle { get; } = new()
         {
             Color = Color.FromHex("#f23645"),
-            Width = 2,
+            Width = 1,
         };
 
         public FillStyle RisingFillStyle { get; } = new()
@@ -97,10 +97,71 @@ namespace Valhalla.Charting.CustomSeries
 
         public virtual void Render(RenderPack rp)
         {
+           // this.DrawCandles(rp);
+
+            this.DrawCandlesWithArea(rp);
+        }
+
+        private void DrawCandles(RenderPack rp)
+        {
             using SKPaint paint = new();
 
             var ohlcs = Data.GetOHLCs();
-           
+            
+            for (int i = 0; i < ohlcs.Count; i++)
+            {
+                OHLC ohlc = ohlcs[i];
+                bool isRising = ohlc.Close >= ohlc.Open;
+                LineStyle lineStyle = isRising ? RisingLineStyle : FallingLineStyle;
+                FillStyle fillStyle = isRising ? RisingFillStyle : FallingFillStyle;
+
+                float top = Axes.GetPixelY(ohlc.High);
+                float bottom = Axes.GetPixelY(ohlc.Low);
+
+                float center, xPxLeft, xPxRight;
+
+                double centerNumber = NumericConversion.ToNumber(ohlc.DateTime);
+                center = Axes.GetPixelX(centerNumber);
+                double halfWidthNumber = ohlc.TimeSpan.TotalDays / 2 * .8;
+                xPxLeft = Axes.GetPixelX(centerNumber - halfWidthNumber);
+                xPxRight = Axes.GetPixelX(centerNumber + halfWidthNumber);
+
+                // do not render OHLCs off the screen
+                if (xPxRight < rp.DataRect.Left || xPxLeft > rp.DataRect.Right)
+                    continue;
+
+                float yPxOpen = Axes.GetPixelY(ohlc.Open);
+                float yPxClose = Axes.GetPixelY(ohlc.Close);
+
+                // low/high line
+                PixelLine verticalLine = new(center, top, center, bottom);
+                Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+
+                // open/close body
+                bool barIsAtLeastOnePixelWide = xPxRight - xPxLeft > 1;
+                if (barIsAtLeastOnePixelWide)
+                {
+                    PixelRangeX xPxRange = new(xPxLeft, xPxRight);
+                    PixelRangeY yPxRange = new(Math.Min(yPxOpen, yPxClose), Math.Max(yPxOpen, yPxClose));
+                    PixelRect rect = new(xPxRange, yPxRange);
+                    if (yPxOpen != yPxClose)
+                    {
+                        fillStyle.Render(rp.Canvas, rect, paint); 
+                    }
+                    else
+                    {
+                        lineStyle.Render(rp.Canvas, rect.BottomLine, paint);
+                    }
+                }
+            }
+        }
+
+        private void DrawCandlesWithArea(RenderPack rp)
+        {
+            using SKPaint paint = new();
+
+            var ohlcs = Data.GetOHLCs();
+
             for (int i = 0; i < ohlcs.Count; i++)
             {
                 OHLC ohlc = ohlcs[i];
@@ -139,7 +200,22 @@ namespace Valhalla.Charting.CustomSeries
                     PixelRect rect = new(xPxRange, yPxRange);
                     if (yPxOpen != yPxClose)
                     {
+                        // fill the body
                         fillStyle.Render(rp.Canvas, rect, paint);
+
+                        halfWidthNumber = ohlc.TimeSpan.TotalDays * .9;
+
+                        var maxRight = Axes.GetPixelX(centerNumber + halfWidthNumber);
+                        xPxRange = new(xPxRight + (float)5, maxRight);
+                        yPxRange= new(top,bottom);
+                        var range = yPxRange.Span / 10;
+                        rect = new(xPxRange, yPxRange);
+                        FillStyle rangeStyle = new FillStyle()
+                        {
+                            Color = Colors.Black
+                        };
+
+                        rangeStyle.Render(rp.Canvas, rect, paint);
                     }
                     else
                     {
