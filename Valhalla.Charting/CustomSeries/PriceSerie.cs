@@ -204,6 +204,7 @@ namespace Valhalla.Charting.CustomSeries
                         // fill the body
                         fillStyle.Render(rp.Canvas, rect, paint);
 
+                        // border the body
                         verticalLine = new PixelLine(xPxLeft, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Close));
                         Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
                         verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxRight, Axes.GetPixelY(ohlc.Close));
