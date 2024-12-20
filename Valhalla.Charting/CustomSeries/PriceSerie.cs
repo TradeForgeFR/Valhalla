@@ -238,18 +238,22 @@ namespace Valhalla.Charting.CustomSeries
             var tradeList = this.Ticks[this.Data.GetOHLCs().IndexOf(ohlc)];
             int tickCount = tradeList.Count - 1;
             var tickRange = (top - bottom) / tickCount;
-            var bigestVolume = tradeList.Max(x => x.BuyVolume+x.SellVolume);
+            var bigestVolume = tradeList.Max(x => x.Volume);
             var startPrice = top + (tickRange / 2);
+            var maxBuyVolume = tradeList.Max(x => x.BuyVolume);
+            var maxSellVolume = tradeList.Max(x => x.SellVolume);
 
             var line = new PixelLine(left, startPrice, maxRight, startPrice);
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
             for (int x = 0; x <= tickCount; x++)
             {
-                if (tradeList[x].Volume == bigestVolume)
-                    rangeStyle.Color = Colors.Orange;
+                if (tradeList[x].SellVolume > tradeList[x].BuyVolume)
+                    rangeStyle.Color = Color.FromHex("#e85c58").WithOpacity(tradeList[x].SellVolume / bigestVolume);
                 else
-                    rangeStyle.Color = Colors.DarkGray.WithOpacity(0.3);
+                    rangeStyle.Color = Color.FromHex("#5fa8b7").WithOpacity(tradeList[x].BuyVolume / bigestVolume);
+
+                rangeStyle.Color = tradeList[x].Volume == bigestVolume ? Colors.Orange : rangeStyle.Color;
 
                 PixelRangeY yPxRange = new(startPrice, startPrice - tickRange);
                 PixelRangeX xPxRange = new(left, maxRight < left ? left + (left - maxRight) : maxRight);
@@ -268,12 +272,12 @@ namespace Valhalla.Charting.CustomSeries
                     if (rangeInPixel > 25)
                         fontSize = 11;
 
-                    // draw bids
+                    // draw bids text
                     var text = new LabelStyle()
                     {
-                        ForeColor = Colors.Black,
+                        ForeColor = tradeList[x].Volume == bigestVolume? Colors.White: Colors.Black,
                         FontSize = fontSize,
-                        Text = tradeList[x].BuyVolume.ToString(),
+                        Text = tradeList[x].SellVolume.ToString(),
                         Bold = true
                     };
                     var textSize = text.Measure();
@@ -283,8 +287,8 @@ namespace Valhalla.Charting.CustomSeries
                     Pixel pixel = new(((left + horizontalMiddle) - (textSize.Width / 4))-2, verticalMiddle - (textSize.Height / 4));
                     text.Render(rp.Canvas, pixel, paint);
 
-                    // draw asks
-                    text.Text = tradeList[x].SellVolume.ToString();
+                    // draw asks text
+                    text.Text = tradeList[x].BuyVolume.ToString();
                     textSize = text.Measure();
                     pixel = new(((left + (3 * horizontalMiddle)) - (textSize.Width / 4))-2, verticalMiddle - (textSize.Height / 4));
                     text.Render(rp.Canvas, pixel, paint);
