@@ -1,5 +1,6 @@
 ﻿using DynamicData;
 using ScottPlot;
+using ScottPlot.Plottables;
 using SkiaSharp;
 
 namespace Valhalla.Charting.CustomSeries
@@ -65,7 +66,7 @@ namespace Valhalla.Charting.CustomSeries
         public AxisLimits GetAxisLimits()
         {
             AxisLimits limits = Data.GetLimits(); // TODO: Data.GetSequentialLimits()
-  
+
             var ohlcs = Data.GetOHLCs();
             if (ohlcs.Count == 0)
                 return limits;
@@ -84,9 +85,9 @@ namespace Valhalla.Charting.CustomSeries
 
             int minIndexInView = (int)NumericConversion.Clamp(Axes.XAxis.Min, 0, ohlcs.Count - 1);
             int maxIndexInView = (int)NumericConversion.Clamp(Axes.XAxis.Max, 0, ohlcs.Count - 1);
-            
-            var result = Data.GetPriceRange(minIndexInView, maxIndexInView); 
-           
+
+            var result = Data.GetPriceRange(minIndexInView, maxIndexInView);
+
             return result;
         }
 
@@ -99,10 +100,10 @@ namespace Valhalla.Charting.CustomSeries
         }
 
         public virtual void Render(RenderPack rp)
-        { 
+        {
             this.DrawCandles(rp);
         }
-       private void DrawCandles(RenderPack rp)
+        private void DrawCandles(RenderPack rp)
         {
             using SKPaint paint = new();
 
@@ -136,7 +137,7 @@ namespace Valhalla.Charting.CustomSeries
                 // low/high line
                 PixelLine verticalLine = new(center, top, center, bottom);
                 Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
-               
+
                 // open/close body
                 bool barIsAtLeastOnePixelWide = xPxRight - xPxLeft > 1;
                 if (barIsAtLeastOnePixelWide)
@@ -146,6 +147,12 @@ namespace Valhalla.Charting.CustomSeries
                     PixelRect rect = new(xPxRange, yPxRange);
                     if (yPxOpen != yPxClose)
                     {
+                        if (this.UseVolumetric)
+                        {
+                            // this.DrawValueArea(ohlc, centerNumber, xPxRight, paint, rp);
+                            this.DrawFootPrint(ohlc, centerNumber, xPxRight,center, paint, rp);
+                        }
+
                         // fill the body
                         fillStyle.Render(rp.Canvas, rect, paint);
 
@@ -159,10 +166,7 @@ namespace Valhalla.Charting.CustomSeries
                         verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Close), xPxLeft, Axes.GetPixelY(ohlc.Close));
                         Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
 
-                        if (this.UseVolumetric)
-                        {
-                            this.DrawValueArea(ohlc, centerNumber, xPxRight, paint, rp);
-                        }                        
+                     
                     }
                     else
                     {
@@ -186,7 +190,6 @@ namespace Valhalla.Charting.CustomSeries
             {
                 Color = Colors.Black
             };
-             
 
             var tradeList = this.Ticks[this.Data.GetOHLCs().IndexOf(ohlc)];
             int tickCount = tradeList.Count - 1;
@@ -210,6 +213,70 @@ namespace Valhalla.Charting.CustomSeries
                 rangeStyle.Render(rp.Canvas, rect, paint);
                 startPrice -= tickRange;
             }
+        }
+
+        private void DrawFootPrint(OHLC ohlc, double centerNumber, float xPxRight, float xPxLeft, SKPaint paint, RenderPack rp)
+        {
+            float top = Axes.GetPixelY(ohlc.High);
+            float bottom = Axes.GetPixelY(ohlc.Low);
+
+            // start drawing the right value area
+            var right = ohlc.TimeSpan.TotalDays * .91;
+            var left = xPxRight + (float)4;
+            var maxRight = Axes.GetPixelX(centerNumber + right);
+
+            FillStyle rangeStyle = new FillStyle()
+            {
+                Color = Colors.Black
+            };
+            LineStyle lineStyle = new LineStyle()
+            {
+                Color = Colors.Gray,
+                Width = 0.5f
+            };
+
+            var tradeList = this.Ticks[this.Data.GetOHLCs().IndexOf(ohlc)];
+            int tickCount = tradeList.Count - 1;
+            var tickRange = (top - bottom) / tickCount;
+            var bigestVolume = tradeList.Max(x => x.Volume);
+            var startPrice = top + (tickRange / 2);
+
+            var line = new PixelLine(left, startPrice, maxRight, startPrice);
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            for (int x = 0; x <= tickCount; x++)
+            {
+                if (tradeList[x].Volume == bigestVolume)
+                    rangeStyle.Color = Colors.Orange;
+                else
+                    rangeStyle.Color = Colors.DarkGray.WithOpacity(0.3);
+
+                PixelRangeY yPxRange = new(startPrice, startPrice - tickRange);
+                PixelRangeX xPxRange = new(left, maxRight < left ? left + (left - maxRight) : maxRight);
+                PixelRect rect = new(xPxRange, yPxRange);
+                rangeStyle.Render(rp.Canvas, rect, paint);
+
+                line = new PixelLine(left, startPrice - tickRange, maxRight, startPrice - tickRange);
+                Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+                startPrice -= tickRange;
+            }
+
+
+            line = new PixelLine(left, bottom - (tickRange / 2), maxRight, bottom - (tickRange / 2));
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            var center = (left + maxRight) / 2; 
+            line = new PixelLine(center, top + (tickRange / 2), center, bottom-(tickRange/2));
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            line = new PixelLine(left, top + (tickRange / 2), left, bottom - (tickRange / 2));
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            line = new PixelLine(maxRight, top + (tickRange / 2), maxRight, bottom - (tickRange / 2));
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+
         }
     }
 }
