@@ -55,7 +55,7 @@ namespace Valhalla.Charting
 
             foreach(OHLC bar in bars)
             {
-                var listOfTrade = bar.Generate(1, 100);
+                var listOfTrade = bar.Generate(10, 100);
                 ticks.Add(listOfTrade);
             }
 
@@ -74,7 +74,7 @@ namespace Valhalla.Charting
     public static class DataGenerator
     {
         private static Random random = new Random();
-
+         
         public static List<TickAnalysis> Generate(this OHLC candle, double tickSize, int maxTicksInCandle)
         {
             var result = new List<TickAnalysis>();
