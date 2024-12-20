@@ -6,7 +6,8 @@ using System.Diagnostics;
 namespace Valhalla.Charting.CustomSeries
 {
     public class PriceSerie(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
-    {
+    { 
+        private string _risingHex = "#e85c58", _failingHex = "#e85c58";
         public List<List<TickAnalysis>> Ticks { get; } = ticks;
         public bool IsVisible { get; set; } = true;
 
@@ -135,8 +136,8 @@ namespace Valhalla.Charting.CustomSeries
                 float yPxClose = Axes.GetPixelY(ohlc.Close);
 
                 // low/high line
-                PixelLine verticalLine = new(center, top, center, bottom);
-                Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
+                PixelLine line = new(center, top, center, bottom);
+                Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
                 // open/close body
                 bool barIsAtLeastOnePixelWide = xPxRight - xPxLeft > 1;
@@ -150,23 +151,21 @@ namespace Valhalla.Charting.CustomSeries
                         if (this.UseVolumetric)
                         {
                             // this.DrawValueArea(ohlc, centerNumber, xPxRight, paint, rp);
-                            this.DrawFootPrint(ohlc, centerNumber, xPxRight,center, paint, rp);
+                            this.DrawFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
                         }
 
                         // fill the body
                         fillStyle.Render(rp.Canvas, rect, paint);
 
                         // border the body
-                        verticalLine = new PixelLine(xPxLeft, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Close));
-                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
-                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxRight, Axes.GetPixelY(ohlc.Close));
-                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
-                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Open));
-                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
-                        verticalLine = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Close), xPxLeft, Axes.GetPixelY(ohlc.Close));
-                        Drawing.DrawLine(rp.Canvas, paint, verticalLine, lineStyle);
-
-                     
+                        line = new PixelLine(xPxLeft, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+                        line = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxRight, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+                        line = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Open), xPxLeft, Axes.GetPixelY(ohlc.Open));
+                        Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+                        line = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Close), xPxLeft, Axes.GetPixelY(ohlc.Close));
+                        Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
                     }
                     else
                     {
@@ -215,7 +214,7 @@ namespace Valhalla.Charting.CustomSeries
             }
         }
 
-        private void DrawFootPrint(OHLC ohlc, double centerNumber, float xPxRight, float xPxLeft, SKPaint paint, RenderPack rp)
+        private void DrawFootPrint(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
         {
             float top = Axes.GetPixelY(ohlc.High);
             float bottom = Axes.GetPixelY(ohlc.Low);
@@ -272,7 +271,7 @@ namespace Valhalla.Charting.CustomSeries
                     if (rangeInPixel > 25)
                         fontSize = 11;
 
-                    // draw bids text
+                   
                     var text = new LabelStyle()
                     {
                         ForeColor = tradeList[x].Volume == bigestVolume? Colors.White: Colors.Black,
@@ -280,8 +279,11 @@ namespace Valhalla.Charting.CustomSeries
                         Text = tradeList[x].SellVolume.ToString(),
                         Bold = true
                     };
+
+                    // get the textSize in pixels
                     var textSize = text.Measure();
 
+                    // draw bids text
                     var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
                     var horizontalMiddle = (xPxRange.Right - xPxRange.Left) / 4;
                     Pixel pixel = new(((left + horizontalMiddle) - (textSize.Width / 4))-2, verticalMiddle - (textSize.Height / 4));
@@ -297,7 +299,6 @@ namespace Valhalla.Charting.CustomSeries
                 startPrice -= tickRange;
             }
 
-
             line = new PixelLine(left, bottom - (tickRange / 2), maxRight, bottom - (tickRange / 2));
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
@@ -310,8 +311,6 @@ namespace Valhalla.Charting.CustomSeries
 
             line = new PixelLine(maxRight, top + (tickRange / 2), maxRight, bottom - (tickRange / 2));
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
-
-
         }
     }
 }

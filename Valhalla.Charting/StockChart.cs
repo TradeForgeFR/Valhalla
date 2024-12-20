@@ -81,8 +81,6 @@ namespace Valhalla.Charting
             var range = (candle.High - candle.Low) / tickSize;
             range = range < 1 ? 1 : range;
 
-            var volumes = ScottPlot.Generate.RandomWalk((int)range);
-          
             for (int j = 0; j < (int)range; j++)
             {
               //  random = new Random();
@@ -128,7 +126,4 @@ namespace Valhalla.Charting
         public long SellTrades { get; set; }
         public DateTime Time { get; set; }
     }
-
-
-
 }
