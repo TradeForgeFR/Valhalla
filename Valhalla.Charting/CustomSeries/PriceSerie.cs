@@ -1,10 +1,14 @@
 ﻿using DynamicData;
 using ScottPlot;
 using SkiaSharp;
-using System.Diagnostics;
 
 namespace Valhalla.Charting.CustomSeries
 {
+    public enum VolumetricType:int
+    {
+        ValueArea=0,
+        FootPrint=1
+    }
     public class PriceSerie(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
     { 
         private string _risingHex = "#e85c58", _failingHex = "#e85c58";
@@ -16,6 +20,8 @@ namespace Valhalla.Charting.CustomSeries
         public IOHLCSource Data { get; } = data;
 
         public bool UseVolumetric { get; set; } = true;
+
+        public VolumetricType SelectedVolumetricType { get; set; } = VolumetricType.ValueArea;
 
         /// <summary>
         /// Fractional width of the candle symbol relative to its time span
@@ -150,8 +156,15 @@ namespace Valhalla.Charting.CustomSeries
                     {
                         if (this.UseVolumetric)
                         {
-                            // this.DrawValueArea(ohlc, centerNumber, xPxRight, paint, rp);
-                            this.DrawFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
+                            switch(this.SelectedVolumetricType)
+                            {
+                                case VolumetricType.ValueArea:
+                                    this.DrawValueArea(ohlc, centerNumber, xPxRight, paint, rp);
+                                    break;
+                                case VolumetricType.FootPrint:
+                                    this.DrawFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
+                                    break;
+                            } 
                         }
 
                         // fill the body

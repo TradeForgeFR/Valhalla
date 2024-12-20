@@ -13,7 +13,7 @@ namespace Valhalla.Charting
         #region private
         private AvaPlot _avaplot;
         private PriceSerie _priceSerie;
-        private Grid _avaPlotHost;
+        private Grid _avaPlotHost; 
         #endregion
 
         public StockChart()
@@ -39,6 +39,19 @@ namespace Valhalla.Charting
             set
             {
                 this._priceSerie!.UseVolumetric = value!.Value;
+                this.AvaPlot.Refresh();
+                this.RaisePropertyChanged(nameof(UseVolumetric));
+            }
+        }
+          
+        public List<VolumetricType> VolumetricsType { get; set; } = Enum.GetValues(typeof(VolumetricType)).Cast<VolumetricType>().ToList();
+
+        public VolumetricType? SelectedVolumetricType
+        {
+            get => this._priceSerie?.SelectedVolumetricType;
+            set
+            {
+                this._priceSerie!.SelectedVolumetricType = value!.Value;
                 this.AvaPlot.Refresh();
                 this.RaisePropertyChanged(nameof(UseVolumetric));
             }
