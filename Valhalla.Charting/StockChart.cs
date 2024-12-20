@@ -89,8 +89,8 @@ namespace Valhalla.Charting
                 double price = Math.Round(random.NextDouble() * (candle.High - candle.Low) + candle.Low, 2); // Round to 2 decimal places
                 long tickVolume = (long)(random.NextDouble() * maxTicksInCandle);
                 long delta = (long)(random.NextDouble() * 2 * tickVolume) - tickVolume;
-                long buyVolume = Math.Max(0, delta);
-                long sellVolume = Math.Min(0, -delta);
+                long buyVolume = random.Next(10, 500 + 1);
+                long sellVolume = random.Next(10, 500 + 1);
                 long trades = (long)(random.NextDouble() * maxTicksInCandle);
                 long buyTrades = (long)(random.NextDouble() * trades);
                 long sellTrades = trades - buyTrades;
@@ -98,7 +98,7 @@ namespace Valhalla.Charting
                 TickAnalysis tick = new TickAnalysis
                 {
                     Price = price,
-                    Volume = Math.Abs(volumes[j]),
+                    Volume = buyVolume+sellVolume,
                     Delta = delta,
                     BuyVolume = buyVolume,
                     SellVolume = sellVolume,

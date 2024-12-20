@@ -1,7 +1,7 @@
 ﻿using DynamicData;
 using ScottPlot;
-using ScottPlot.Plottables;
 using SkiaSharp;
+using System.Diagnostics;
 
 namespace Valhalla.Charting.CustomSeries
 {
@@ -14,7 +14,7 @@ namespace Valhalla.Charting.CustomSeries
 
         public IOHLCSource Data { get; } = data;
 
-        public bool UseVolumetric { get; set; } = false;
+        public bool UseVolumetric { get; set; } = true;
 
         /// <summary>
         /// Fractional width of the candle symbol relative to its time span
@@ -238,7 +238,7 @@ namespace Valhalla.Charting.CustomSeries
             var tradeList = this.Ticks[this.Data.GetOHLCs().IndexOf(ohlc)];
             int tickCount = tradeList.Count - 1;
             var tickRange = (top - bottom) / tickCount;
-            var bigestVolume = tradeList.Max(x => x.Volume);
+            var bigestVolume = tradeList.Max(x => x.BuyVolume+x.SellVolume);
             var startPrice = top + (tickRange / 2);
 
             var line = new PixelLine(left, startPrice, maxRight, startPrice);
@@ -258,6 +258,37 @@ namespace Valhalla.Charting.CustomSeries
 
                 line = new PixelLine(left, startPrice - tickRange, maxRight, startPrice - tickRange);
                 Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+                var rangeInPixel = (double)(yPxRange.Bottom- yPxRange.Top);
+
+                // ensure there is a minium of 10 pixels space
+                if (rangeInPixel > 8)
+                {
+                    int fontSize = 8;
+                    if (rangeInPixel > 25)
+                        fontSize = 11;
+
+                    // draw bids
+                    var text = new LabelStyle()
+                    {
+                        ForeColor = Colors.Black,
+                        FontSize = fontSize,
+                        Text = tradeList[x].BuyVolume.ToString(),
+                        Bold = true
+                    };
+                    var textSize = text.Measure();
+
+                    var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
+                    var horizontalMiddle = (xPxRange.Right - xPxRange.Left) / 4;
+                    Pixel pixel = new(((left + horizontalMiddle) - (textSize.Width / 4))-2, verticalMiddle - (textSize.Height / 4));
+                    text.Render(rp.Canvas, pixel, paint);
+
+                    // draw asks
+                    text.Text = tradeList[x].SellVolume.ToString();
+                    textSize = text.Measure();
+                    pixel = new(((left + (3 * horizontalMiddle)) - (textSize.Width / 4))-2, verticalMiddle - (textSize.Height / 4));
+                    text.Render(rp.Canvas, pixel, paint);
+                }              
 
                 startPrice -= tickRange;
             }
