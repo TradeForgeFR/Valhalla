@@ -318,7 +318,7 @@ namespace Valhalla.Charting.CustomSeries
                 var text = new LabelStyle()
                 {
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
-                    FontSize = .5f * boxHeight,
+                    FontSize = Math.Min(.5f * boxHeight, 12),
                     Text = tradeList[x].SellVolume.ToString(),
                     Bold = true
                 };
