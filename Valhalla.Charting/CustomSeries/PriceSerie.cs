@@ -12,7 +12,7 @@ namespace Valhalla.Charting.CustomSeries
         FootPrint=1
     }
     public class PriceSerie(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
-    { 
+    {
         private string _risingHex = "#e85c58", _failingHex = "#e85c58";
         public List<List<TickAnalysis>> Ticks { get; } = ticks;
         public bool IsVisible { get; set; } = true;
@@ -113,7 +113,7 @@ namespace Valhalla.Charting.CustomSeries
             var ohlcs = this.Data.GetOHLCs();
             if (ohlcs.Count == 0 || ohlcs.Count < 2) return 0;
 
-            var ohlc1= ohlcs[0];
+            var ohlc1 = ohlcs[0];
             var ohlc2 = ohlcs[1];
 
             double centerNumber = NumericConversion.ToNumber(ohlc1.DateTime);
@@ -174,19 +174,6 @@ namespace Valhalla.Charting.CustomSeries
                     PixelRect rect = new(xPxRange, yPxRange);
                     if (yPxOpen != yPxClose)
                     {
-                        if (this.UseVolumetric && isSpaceEnough)
-                        {
-                            switch (this.SelectedVolumetricType)
-                            {
-                                case VolumetricType.ValueArea:
-                                    this.RenderValueArea(ohlc, centerNumber, xPxRight, paint, rp);
-                                    break;
-                                case VolumetricType.FootPrint:
-                                    this.RenderFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
-                                    break;
-                            }
-                        }
-
                         // fill the body
                         fillStyle.Render(rp.Canvas, rect, paint);
 
@@ -199,6 +186,21 @@ namespace Valhalla.Charting.CustomSeries
                         Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
                         line = new PixelLine(xPxRight, Axes.GetPixelY(ohlc.Close), xPxLeft, Axes.GetPixelY(ohlc.Close));
                         Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+                        if (this.UseVolumetric && isSpaceEnough)
+                        {
+                            switch (this.SelectedVolumetricType)
+                            {
+                                case VolumetricType.ValueArea:
+                                    this.RenderValueArea(ohlc, centerNumber, xPxRight, paint, rp);
+                                    break;
+                                case VolumetricType.FootPrint:
+                                    this.RenderFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
+                                    break;
+                            }
+
+                            this.RenderPanel(ohlc, centerNumber, xPxRight, paint, rp, (float)spaceBetweenCandles);
+                        } 
                     }
                     else
                     {
@@ -207,7 +209,7 @@ namespace Valhalla.Charting.CustomSeries
                 }
             }
         }
-        
+
         private void RenderValueArea(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
         {
             float top = Axes.GetPixelY(ohlc.High);
@@ -228,6 +230,8 @@ namespace Valhalla.Charting.CustomSeries
             var tickRange = (top - bottom) / tickCount;
             var bigestVolume = tradeList.Max(x => x.Volume);
             var startPrice = top + (tickRange / 2);
+            float smallesFontSize = 12;
+
             for (int x = 0; x <= tickCount; x++)
             {
                 if (tradeList[x].Volume == bigestVolume)
@@ -249,7 +253,7 @@ namespace Valhalla.Charting.CustomSeries
                 var text = new LabelStyle()
                 {
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
-                    FontSize = Math.Min(.8f * boxHeight, 12),
+                    FontSize = Math.Min(.8f * boxHeight, smallesFontSize),
                     Text = tradeList[x].Volume.ToString(),
                     Bold = true
                 };
@@ -259,7 +263,7 @@ namespace Valhalla.Charting.CustomSeries
 
                 // draw bids text
                 var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
-                Pixel pixel = new(left+4, verticalMiddle - (textSize.Height / 4));
+                Pixel pixel = new(left + 4, verticalMiddle - (textSize.Height / 4));
                 text.Render(rp.Canvas, pixel, paint);
 
                 startPrice -= tickRange;
@@ -345,8 +349,8 @@ namespace Valhalla.Charting.CustomSeries
             line = new PixelLine(left, bottom - (tickRange / 2), maxRight, bottom - (tickRange / 2));
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
-            var center = (left + maxRight) / 2; 
-            line = new PixelLine(center, top + (tickRange / 2), center, bottom-(tickRange/2));
+            var center = (left + maxRight) / 2;
+            line = new PixelLine(center, top + (tickRange / 2), center, bottom - (tickRange / 2));
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
             line = new PixelLine(left, top + (tickRange / 2), left, bottom - (tickRange / 2));
@@ -354,6 +358,30 @@ namespace Valhalla.Charting.CustomSeries
 
             line = new PixelLine(maxRight, top + (tickRange / 2), maxRight, bottom - (tickRange / 2));
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+        }
+
+        private void RenderPanel(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp, float spaceBetweenCandles)
+        {
+            float top = Axes.GetPixelY(this.Axes.YAxis.Min) - 20;
+            float bottom = Axes.GetPixelY(this.Axes.YAxis.Min);
+
+            /* var right = ohlc.TimeSpan.TotalDays;// * .91;
+             var left = Axes.GetPixelX(centerNumber );
+             var maxRight = Axes.GetPixelX(centerNumber + right);*/
+
+            var right = ohlc.TimeSpan.TotalDays * .91;
+            var left = xPxRight + (float)4;
+            var maxRight = Axes.GetPixelX(centerNumber + right);
+
+            FillStyle rangeStyle = new FillStyle()
+            {
+                Color = Colors.Black
+            };
+
+            PixelRangeY yPxRange = new(bottom, top);
+            PixelRangeX xPxRange = new(left, maxRight);
+            PixelRect rect = new(xPxRange, yPxRange);
+            rangeStyle.Render(rp.Canvas, rect, paint);
         }
     }
 }
