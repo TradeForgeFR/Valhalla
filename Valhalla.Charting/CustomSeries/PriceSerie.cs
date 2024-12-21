@@ -243,6 +243,25 @@ namespace Valhalla.Charting.CustomSeries
                 PixelRangeX xPxRange = new(left, maxRight < left ? left + (left - maxRight) : maxRight);
                 PixelRect rect = new(xPxRange, yPxRange);
                 rangeStyle.Render(rp.Canvas, rect, paint);
+
+                var boxHeight = Math.Abs(yPxRange.Top - yPxRange.Bottom);
+                
+                var text = new LabelStyle()
+                {
+                    ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
+                    FontSize = .8f* boxHeight,
+                    Text = tradeList[x].Volume.ToString(),
+                    Bold = true
+                };
+
+                // get the textSize in pixels
+                var textSize = text.Measure();
+
+                // draw bids text
+                var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
+                Pixel pixel = new(left+4, verticalMiddle - (textSize.Height / 4));
+                text.Render(rp.Canvas, pixel, paint);
+
                 startPrice -= tickRange;
             }
         }
@@ -295,39 +314,29 @@ namespace Valhalla.Charting.CustomSeries
                 line = new PixelLine(left, startPrice - tickRange, maxRight, startPrice - tickRange);
                 Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
-                var rangeInPixel = (double)(yPxRange.Bottom- yPxRange.Top);
-
-                // ensure there is a minium of 10 pixels space
-                if (rangeInPixel > 8)
+                var boxHeight = Math.Abs(yPxRange.Top - yPxRange.Bottom);
+                var text = new LabelStyle()
                 {
-                    int fontSize = 8;
-                    if (rangeInPixel > 25)
-                        fontSize = 11;
+                    ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
+                    FontSize = .5f * boxHeight,
+                    Text = tradeList[x].SellVolume.ToString(),
+                    Bold = true
+                };
 
-                   
-                    var text = new LabelStyle()
-                    {
-                        ForeColor = tradeList[x].Volume == bigestVolume? Colors.White: Colors.Black,
-                        FontSize = fontSize,
-                        Text = tradeList[x].SellVolume.ToString(),
-                        Bold = true
-                    };
+                // get the textSize in pixels
+                var textSize = text.Measure();
 
-                    // get the textSize in pixels
-                    var textSize = text.Measure();
+                // draw bids text
+                var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
+                var horizontalMiddle = (xPxRange.Right - xPxRange.Left) / 4;
+                Pixel pixel = new(((left + horizontalMiddle) - (textSize.Width / 4)) - 2, verticalMiddle - (textSize.Height / 4));
+                text.Render(rp.Canvas, pixel, paint);
 
-                    // draw bids text
-                    var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
-                    var horizontalMiddle = (xPxRange.Right - xPxRange.Left) / 4;
-                    Pixel pixel = new(((left + horizontalMiddle) - (textSize.Width / 4))-2, verticalMiddle - (textSize.Height / 4));
-                    text.Render(rp.Canvas, pixel, paint);
-
-                    // draw asks text
-                    text.Text = tradeList[x].BuyVolume.ToString();
-                    textSize = text.Measure();
-                    pixel = new(((left + (3 * horizontalMiddle)) - (textSize.Width / 4))-2, verticalMiddle - (textSize.Height / 4));
-                    text.Render(rp.Canvas, pixel, paint);
-                }              
+                // draw asks text
+                text.Text = tradeList[x].BuyVolume.ToString();
+                textSize = text.Measure();
+                pixel = new(((left + (3 * horizontalMiddle)) - (textSize.Width / 4)) - 2, verticalMiddle - (textSize.Height / 4));
+                text.Render(rp.Canvas, pixel, paint);
 
                 startPrice -= tickRange;
             }
