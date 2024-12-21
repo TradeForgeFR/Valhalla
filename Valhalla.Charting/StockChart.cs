@@ -51,6 +51,8 @@ namespace Valhalla.Charting
             get => this._priceSerie?.SelectedVolumetricType;
             set
             {
+                if (!value.HasValue)
+                    return;
                 this._priceSerie!.SelectedVolumetricType = value!.Value;
                 this.AvaPlot.Refresh();
                 this.RaisePropertyChanged(nameof(UseVolumetric));
@@ -60,15 +62,11 @@ namespace Valhalla.Charting
 
         public void FillPrice(OHLC[] bars)
         {
-            /*    var customeXAxis = new ValhallaDateTimeXAxis();
-
-                this.AvaPlot.Plot.Axes.Remove(Edge.Bottom);
-                this.AvaPlot.Plot.Axes.AddBottomAxis(customeXAxis);**/
             var ticks = new List<List<TickAnalysis>>();
 
             foreach(OHLC bar in bars)
             {
-                var listOfTrade = bar.Generate(10, 100);
+                var listOfTrade = bar.Generate(5, 100);
                 ticks.Add(listOfTrade);
             }
 

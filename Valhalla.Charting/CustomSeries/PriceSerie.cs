@@ -1,6 +1,8 @@
 ﻿using DynamicData;
 using ScottPlot;
 using SkiaSharp;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace Valhalla.Charting.CustomSeries
 {
@@ -21,7 +23,7 @@ namespace Valhalla.Charting.CustomSeries
 
         public bool UseVolumetric { get; set; } = true;
 
-        public VolumetricType SelectedVolumetricType { get; set; } = VolumetricType.ValueArea;
+        public VolumetricType SelectedVolumetricType { get; set; } = VolumetricType.FootPrint;
 
         /// <summary>
         /// Fractional width of the candle symbol relative to its time span
@@ -106,15 +108,33 @@ namespace Valhalla.Charting.CustomSeries
                 : null;
         }
 
-        public virtual void Render(RenderPack rp)
+        public double PixelsBetweenCandles()
         {
-            this.DrawCandles(rp);
+            var ohlcs = this.Data.GetOHLCs();
+            if (ohlcs.Count == 0 || ohlcs.Count < 2) return 0;
+
+            var ohlc1= ohlcs[0];
+            var ohlc2 = ohlcs[1];
+
+            double centerNumber = NumericConversion.ToNumber(ohlc1.DateTime);
+            var center = Axes.GetPixelX(centerNumber);
+
+
+            double centerNumber2 = NumericConversion.ToNumber(ohlc2.DateTime);
+            var center2 = Axes.GetPixelX(centerNumber2);
+
+            return Math.Abs(center - center2);
         }
-        private void DrawCandles(RenderPack rp)
+
+        public virtual void Render(RenderPack rp)
         {
             using SKPaint paint = new();
 
             var ohlcs = Data.GetOHLCs();
+
+            // ensure there is at list 60 pixels between the candles 
+            var spaceBetweenCandles = this.PixelsBetweenCandles();
+            var isSpaceEnough = spaceBetweenCandles >= 60;
 
             for (int i = 0; i < ohlcs.Count; i++)
             {
@@ -130,7 +150,7 @@ namespace Valhalla.Charting.CustomSeries
 
                 double centerNumber = NumericConversion.ToNumber(ohlc.DateTime);
                 center = Axes.GetPixelX(centerNumber);
-                double halfWidthNumber = this.UseVolumetric ? ohlc.TimeSpan.TotalDays / 2 * SymbolWidth : ohlc.TimeSpan.TotalDays / 2 * .8;
+                double halfWidthNumber = (this.UseVolumetric && isSpaceEnough) ? ohlc.TimeSpan.TotalDays / 2 * SymbolWidth : ohlc.TimeSpan.TotalDays / 2 * .8;
                 xPxLeft = Axes.GetPixelX(centerNumber - halfWidthNumber);
                 xPxRight = Axes.GetPixelX(centerNumber + halfWidthNumber);
 
@@ -154,17 +174,17 @@ namespace Valhalla.Charting.CustomSeries
                     PixelRect rect = new(xPxRange, yPxRange);
                     if (yPxOpen != yPxClose)
                     {
-                        if (this.UseVolumetric)
+                        if (this.UseVolumetric && isSpaceEnough)
                         {
-                            switch(this.SelectedVolumetricType)
+                            switch (this.SelectedVolumetricType)
                             {
                                 case VolumetricType.ValueArea:
-                                    this.DrawValueArea(ohlc, centerNumber, xPxRight, paint, rp);
+                                    this.RenderValueArea(ohlc, centerNumber, xPxRight, paint, rp);
                                     break;
                                 case VolumetricType.FootPrint:
-                                    this.DrawFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
+                                    this.RenderFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
                                     break;
-                            } 
+                            }
                         }
 
                         // fill the body
@@ -187,8 +207,8 @@ namespace Valhalla.Charting.CustomSeries
                 }
             }
         }
-
-        private void DrawValueArea(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
+        
+        private void RenderValueArea(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
         {
             float top = Axes.GetPixelY(ohlc.High);
             float bottom = Axes.GetPixelY(ohlc.Low);
@@ -227,7 +247,7 @@ namespace Valhalla.Charting.CustomSeries
             }
         }
 
-        private void DrawFootPrint(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
+        private void RenderFootPrint(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
         {
             float top = Axes.GetPixelY(ohlc.High);
             float bottom = Axes.GetPixelY(ohlc.Low);
