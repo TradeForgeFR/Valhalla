@@ -1,8 +1,6 @@
 ﻿using DynamicData;
 using ScottPlot;
 using SkiaSharp;
-using System.Diagnostics;
-using System.Diagnostics.Metrics;
 
 namespace Valhalla.Charting.CustomSeries
 {
@@ -10,6 +8,13 @@ namespace Valhalla.Charting.CustomSeries
     {
         ValueArea=0,
         FootPrint=1
+    }
+
+    public enum StaticticsBarEdge
+    {
+        Top,
+        Bottom,
+        None
     }
     public class PriceSerie(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
     {
@@ -23,6 +28,7 @@ namespace Valhalla.Charting.CustomSeries
 
         public bool UseVolumetric { get; set; } = true;
 
+        public StaticticsBarEdge StaticticsBarEdge { get; set; } = StaticticsBarEdge.Top;
         public VolumetricType SelectedVolumetricType { get; set; } = VolumetricType.FootPrint;
 
         /// <summary>
@@ -199,7 +205,7 @@ namespace Valhalla.Charting.CustomSeries
                                     break;
                             }
 
-                            this.RenderPanel(ohlc, centerNumber, xPxRight, paint, rp, (float)spaceBetweenCandles);
+                            this.RenderBottomPanel(ohlc, centerNumber - halfWidthNumber,  rp);
                         } 
                     }
                     else
@@ -360,28 +366,84 @@ namespace Valhalla.Charting.CustomSeries
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
         }
 
-        private void RenderPanel(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp, float spaceBetweenCandles)
+        private void RenderBottomPanel(OHLC ohlc, double leftValue, RenderPack rp)
         {
-            float top = Axes.GetPixelY(this.Axes.YAxis.Min) - 20;
-            float bottom = Axes.GetPixelY(this.Axes.YAxis.Min);
+            if(this.StaticticsBarEdge == StaticticsBarEdge.None)
+                return;
 
-            /* var right = ohlc.TimeSpan.TotalDays;// * .91;
-             var left = Axes.GetPixelX(centerNumber );
-             var maxRight = Axes.GetPixelX(centerNumber + right);*/
+            using SKPaint paint = new();
+            var rowHeight = this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? 15 : -15;
 
-            var right = ohlc.TimeSpan.TotalDays * .91;
-            var left = xPxRight + (float)4;
-            var maxRight = Axes.GetPixelX(centerNumber + right);
+            float top = this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) - rowHeight : Axes.GetPixelY(this.Axes.YAxis.Max) - rowHeight;
+            float bottom = this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
+
+            var days = ohlc.TimeSpan.TotalDays;// * .91;
+            var left = Axes.GetPixelX(leftValue)-1;
+            var right = Axes.GetPixelX(leftValue + days)+1;
+            PixelRangeX xPxRange = new(left, right);
+
 
             FillStyle rangeStyle = new FillStyle()
             {
-                Color = Colors.Black
+                Color = Colors.Beige
             };
 
-            PixelRangeY yPxRange = new(bottom, top);
-            PixelRangeX xPxRange = new(left, maxRight);
+            LineStyle lineStyle = new LineStyle()
+            {
+                Color = Colors.Black,
+                Width = 0.5f
+            };
+
+
+            //row 1
+            PixelRangeY yPxRange = new(bottom, top);            
             PixelRect rect = new(xPxRange, yPxRange);
             rangeStyle.Render(rp.Canvas, rect, paint);
+            var line = new PixelLine(left, top, right, top);
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            //row 2
+            top -= rowHeight;
+            bottom -= rowHeight;
+            rangeStyle.Color = Colors.Red;
+            yPxRange = new(bottom, top);
+            rect = new(xPxRange, yPxRange);
+            rangeStyle.Render(rp.Canvas, rect, paint);
+            line = new PixelLine(left, top, right, top);
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            //row 3
+            top -= rowHeight;
+            bottom -= rowHeight;
+            rangeStyle.Color = Colors.Blue;
+            yPxRange = new(bottom, top);
+            rect = new(xPxRange, yPxRange);
+            rangeStyle.Render(rp.Canvas, rect, paint);
+            line = new PixelLine(left, top, right, top);
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            //row 4
+            top -= rowHeight;
+            bottom -= rowHeight;
+            rangeStyle.Color = Colors.Green;
+            yPxRange = new(bottom, top);
+            rect = new(xPxRange, yPxRange);
+            rangeStyle.Render(rp.Canvas, rect, paint);
+            line = new PixelLine(left, top, right, top);
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            // draw the  bar
+            var y =  this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
+            line = new PixelLine(left, top, left, y);
+            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+
+            var barsCount = this.Data.GetOHLCs().Count()-1;
+            var index = this.Data.GetOHLCs().IndexOf(ohlc);
+            if (barsCount == index)
+            {
+                line = new PixelLine(right, top, right, y);
+                Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+            }            
         }
     }
 }

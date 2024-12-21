@@ -55,7 +55,22 @@ namespace Valhalla.Charting
                     return;
                 this._priceSerie!.SelectedVolumetricType = value!.Value;
                 this.AvaPlot.Refresh();
-                this.RaisePropertyChanged(nameof(UseVolumetric));
+                this.RaisePropertyChanged(nameof(SelectedVolumetricType));
+            }
+        }
+
+        public List<StaticticsBarEdge> StaticticsBarEdge { get; set; } = Enum.GetValues(typeof(StaticticsBarEdge)).Cast<StaticticsBarEdge>().ToList();
+
+        public StaticticsBarEdge? SelectedStaticticsBarEdge
+        {
+            get => this._priceSerie?.StaticticsBarEdge;
+            set
+            {
+                if (!value.HasValue)
+                    return;
+                this._priceSerie!.StaticticsBarEdge = value!.Value;
+                this.AvaPlot.Refresh();
+                this.RaisePropertyChanged(nameof(SelectedStaticticsBarEdge));
             }
         }
         #endregion
@@ -66,7 +81,7 @@ namespace Valhalla.Charting
 
             foreach(OHLC bar in bars)
             {
-                var listOfTrade = bar.Generate(5, 100);
+                var listOfTrade = bar.Generate(10, 100);
                 ticks.Add(listOfTrade);
             }
 
@@ -78,6 +93,9 @@ namespace Valhalla.Charting
 
 
             this.AvaPlot.Plot.PlotControl!.Refresh();
+
+            this.RaisePropertyChanged(nameof(this.SelectedStaticticsBarEdge));
+            this.RaisePropertyChanged(nameof(this.SelectedVolumetricType));
         }
     }
 
