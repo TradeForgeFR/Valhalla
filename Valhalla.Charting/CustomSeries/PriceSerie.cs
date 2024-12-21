@@ -245,11 +245,11 @@ namespace Valhalla.Charting.CustomSeries
                 rangeStyle.Render(rp.Canvas, rect, paint);
 
                 var boxHeight = Math.Abs(yPxRange.Top - yPxRange.Bottom);
-                
+
                 var text = new LabelStyle()
                 {
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
-                    FontSize = .8f* boxHeight,
+                    FontSize = Math.Min(.8f * boxHeight, 12),
                     Text = tradeList[x].Volume.ToString(),
                     Bold = true
                 };
@@ -296,6 +296,7 @@ namespace Valhalla.Charting.CustomSeries
 
             var line = new PixelLine(left, startPrice, maxRight, startPrice);
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
+            float smallesFontSize = 12;
 
             for (int x = 0; x <= tickCount; x++)
             {
@@ -318,7 +319,7 @@ namespace Valhalla.Charting.CustomSeries
                 var text = new LabelStyle()
                 {
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
-                    FontSize = Math.Min(.5f * boxHeight, 12),
+                    FontSize = Math.Min(.5f * boxHeight, smallesFontSize),
                     Text = tradeList[x].SellVolume.ToString(),
                     Bold = true
                 };
