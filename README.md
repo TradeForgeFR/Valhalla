@@ -75,8 +75,7 @@ We welcome contributions from developers, designers, and traders! Here’s how y
 
 
 ## Community and Support
-Comming soon.
-
+[Discord](https://discord.gg/XWf7bjjcTz)
 ## License
 Valhalla is released under the [MIT License](https://github.com/TradeForgeFR/Valhalla/blob/main/LICENCE.txt). Feel free to use, modify, and distribute the software.
 
