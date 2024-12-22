@@ -116,12 +116,12 @@ public class Worker : BackgroundService
             }
         }
 
-        if (count == 0)
-        {
-            string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
-            throw new ApplicationException(
-                $"Can't find any type which implements IProvider in {assembly} from {assembly.Location}.\n" +
-                $"Available types: {availableTypes}");
-        }
+        // if (count == 0)
+        // {
+        //     string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
+        //     throw new ApplicationException(
+        //         $"Can't find any type which implements IProvider in {assembly} from {assembly.Location}.\n" +
+        //         $"Available types: {availableTypes}");
+        // }
     }
 }
