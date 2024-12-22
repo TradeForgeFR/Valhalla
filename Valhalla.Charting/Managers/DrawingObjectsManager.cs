@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using DynamicData;
 using ReactiveUI;
 using ScottPlot;
 using ScottPlot.Avalonia;

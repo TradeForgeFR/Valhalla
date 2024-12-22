@@ -16,9 +16,11 @@
         <Button Content="Fibo"
                 Command="{Binding StockChart.DrawingObjectsManager.StartDrawingFibonacciCommand} "/>
       <CheckBox Content="Use Volumetrics"
-                IsChecked="{Binding StockChart.UseVolumetric, Mode=TwoWay} "/>
-      <ComboBox ItemsSource="{Binding StockChart.VolumetricsType}"
-                SelectedValue="{Binding StockChart.SelectedVolumetricType, Mode=TwoWay}"/>
+                IsChecked="{Binding StockChart.PricesPlot.UseVolumetric, Mode=TwoWay} "/>
+      <ComboBox ItemsSource="{Binding StockChart.PricesPlot.VolumetricsTypeList}"
+                SelectedValue="{Binding StockChart.PricesPlot.SelectedVolumetricType, Mode=TwoWay}"/>
+        <ComboBox ItemsSource="{Binding StockChart.PricesPlot.StatisticsBarEdgeList}"
+                  SelectedValue="{Binding StockChart.PricesPlot.SelectedStatisticsBarEdge, Mode=TwoWay}"/>
       </StackPanel>
         <ContentControl Content="{Binding StockChart.AvaPlotHost}" Grid.Row="1"/>
     </Grid>
