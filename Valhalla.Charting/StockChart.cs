@@ -12,7 +12,7 @@ namespace Valhalla.Charting
     {
         #region private
         private AvaPlot _avaplot;
-        private PriceSerie _priceSerie;
+        private AdvancedStockPlottable _priceSerie;
         private Grid _avaPlotHost; 
         #endregion
 
@@ -31,7 +31,7 @@ namespace Valhalla.Charting
 
         public DrawingObjectsManager DrawingObjectsManager { get; } = new DrawingObjectsManager();
 
-        public PriceSerie PriceSerie { get {  return this._priceSerie; } }
+        public AdvancedStockPlottable PriceSerie { get {  return this._priceSerie; } }
 
         public bool? UseVolumetric
         {
@@ -59,18 +59,18 @@ namespace Valhalla.Charting
             }
         }
 
-        public List<StaticticsBarEdge> StaticticsBarEdge { get; set; } = Enum.GetValues(typeof(StaticticsBarEdge)).Cast<StaticticsBarEdge>().ToList();
+        public List<StatisticsBarEdge> StatisticsBarEdge { get; set; } = Enum.GetValues(typeof(StatisticsBarEdge)).Cast<StatisticsBarEdge>().ToList();
 
-        public StaticticsBarEdge? SelectedStaticticsBarEdge
+        public StatisticsBarEdge? SelectedStatisticsBarEdge
         {
-            get => this._priceSerie?.StaticticsBarEdge;
+            get => this._priceSerie?.StatisticsBarEdge;
             set
             {
                 if (!value.HasValue)
                     return;
-                this._priceSerie!.StaticticsBarEdge = value!.Value;
+                this._priceSerie!.StatisticsBarEdge = value!.Value;
                 this.AvaPlot.Refresh();
-                this.RaisePropertyChanged(nameof(SelectedStaticticsBarEdge));
+                this.RaisePropertyChanged(nameof(SelectedStatisticsBarEdge));
             }
         }
         #endregion
@@ -86,16 +86,16 @@ namespace Valhalla.Charting
             }
 
             OHLCSourceList dataSource = new(bars.ToList());
-            this._priceSerie = new PriceSerie(dataSource,ticks);
+            this._priceSerie = new AdvancedStockPlottable(dataSource,ticks);
 
             this.AvaPlot.Plot.Add.Plottable(this._priceSerie);
             this.AvaPlot.Plot.Axes.DateTimeTicksBottom();
 
-
             this.AvaPlot.Plot.PlotControl!.Refresh();
 
-            this.RaisePropertyChanged(nameof(this.SelectedStaticticsBarEdge));
+            this.RaisePropertyChanged(nameof(this.SelectedStatisticsBarEdge));
             this.RaisePropertyChanged(nameof(this.SelectedVolumetricType));
+            this.RaisePropertyChanged(nameof(this.UseVolumetric));
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using ScottPlot;
 using SkiaSharp;
+using Valhalla.TechnicalAnalysis.Models;
 
 namespace Valhalla.Charting.CustomSeries
 {
@@ -10,13 +11,13 @@ namespace Valhalla.Charting.CustomSeries
         FootPrint=1
     }
 
-    public enum StaticticsBarEdge
+    public enum StatisticsBarEdge
     {
         Top,
         Bottom,
         None
     }
-    public class PriceSerie(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
+    public class AdvancedStockPlottable(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
     {
         private string _risingHex = "#e85c58", _failingHex = "#e85c58";
         public List<List<TickAnalysis>> Ticks { get; } = ticks;
@@ -28,7 +29,7 @@ namespace Valhalla.Charting.CustomSeries
 
         public bool UseVolumetric { get; set; } = true;
 
-        public StaticticsBarEdge StaticticsBarEdge { get; set; } = StaticticsBarEdge.Top;
+        public StatisticsBarEdge StatisticsBarEdge { get; set; } = StatisticsBarEdge.Top;
         public VolumetricType SelectedVolumetricType { get; set; } = VolumetricType.FootPrint;
 
         /// <summary>
@@ -368,14 +369,14 @@ namespace Valhalla.Charting.CustomSeries
 
         private void RenderBottomPanel(OHLC ohlc, double leftValue, RenderPack rp)
         {
-            if(this.StaticticsBarEdge == StaticticsBarEdge.None)
+            if(this.StatisticsBarEdge == StatisticsBarEdge.None)
                 return;
 
             using SKPaint paint = new();
-            var rowHeight = this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? 15 : -15;
+            var rowHeight = this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? 15 : -15;
 
-            float top = this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) - rowHeight : Axes.GetPixelY(this.Axes.YAxis.Max) - rowHeight;
-            float bottom = this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
+            float top = this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) - rowHeight : Axes.GetPixelY(this.Axes.YAxis.Max) - rowHeight;
+            float bottom = this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
 
             var days = ohlc.TimeSpan.TotalDays;// * .91;
             var left = Axes.GetPixelX(leftValue)-1;
@@ -433,7 +434,7 @@ namespace Valhalla.Charting.CustomSeries
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
             // draw the  bar
-            var y =  this.StaticticsBarEdge == StaticticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
+            var y =  this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
             line = new PixelLine(left, top, left, y);
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
@@ -446,4 +447,5 @@ namespace Valhalla.Charting.CustomSeries
             }            
         }
     }
+
 }

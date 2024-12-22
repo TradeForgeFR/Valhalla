@@ -19,8 +19,8 @@
                 IsChecked="{Binding StockChart.UseVolumetric, Mode=TwoWay} "/>
       <ComboBox ItemsSource="{Binding StockChart.VolumetricsType}"
                 SelectedValue="{Binding StockChart.SelectedVolumetricType, Mode=TwoWay}"/>
-        <ComboBox ItemsSource="{Binding StockChart.StaticticsBarEdge}"
-                  SelectedValue="{Binding StockChart.SelectedStaticticsBarEdge, Mode=TwoWay}"/>
+        <ComboBox ItemsSource="{Binding StockChart.StatisticsBarEdge}"
+                  SelectedValue="{Binding StockChart.SelectedStatisticsBarEdge, Mode=TwoWay}"/>
       </StackPanel>
         <ContentControl Content="{Binding StockChart.AvaPlotHost}" Grid.Row="1"/>
     </Grid>
