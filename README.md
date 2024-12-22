@@ -75,7 +75,8 @@ We welcome contributions from developers, designers, and traders! Here’s how y
 
 
 ## Community and Support
-[Discord](https://discord.gg/XWf7bjjcTz)
+Comming soon on Discord and Telegram
+
 ## License
 Valhalla is released under the [MIT License](https://github.com/TradeForgeFR/Valhalla/blob/main/LICENCE.txt). Feel free to use, modify, and distribute the software.
 
@@ -83,6 +84,8 @@ Valhalla is released under the [MIT License](https://github.com/TradeForgeFR/Val
 
 ## Acknowledgments
 We thank the Avalonia UI and ScottPlot communities and our contributors for their invaluable support in making Valhalla a reality.
+### Contributors
+[Philippe Cortellezzi](https://www.linkedin.com/in/philippe-cortellezzi-808b45173/ "SysAdmin, Spatial Center of CNES")
 
 ---
 
