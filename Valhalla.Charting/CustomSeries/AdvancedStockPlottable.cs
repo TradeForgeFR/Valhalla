@@ -1,9 +1,6 @@
-﻿using Avalonia.Controls;
-using DynamicData;
+﻿using DynamicData;
 using ReactiveUI;
 using ScottPlot;
-using ScottPlot.Colormaps;
-using ScottPlot.PlotStyles;
 using SkiaSharp;
 using Valhalla.TechnicalAnalysis.Models;
 
@@ -268,7 +265,7 @@ namespace Valhalla.Charting.CustomSeries
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
                     FontSize = Math.Min(.5f * boxHeight, smallesFontSize),
                     Text = tradeList[x].Volume.ToString(),
-                    Bold = true
+                    Bold = tradeList[x].Volume == bigestVolume
                 };
 
                 // get the textSize in pixels
@@ -343,11 +340,12 @@ namespace Valhalla.Charting.CustomSeries
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
                     FontSize = Math.Min(.5f * boxHeight, smallesFontSize),
                     Text = tradeList[x].SellVolume.ToString(),
-                    Bold = true
+                    Bold = tradeList[x].Volume == bigestVolume
                 };
 
                 // get the textSize in pixels
                 var textSize = text.Measure();
+
 
                 // draw bids text
                 var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
@@ -396,34 +394,34 @@ namespace Valhalla.Charting.CustomSeries
             var (rowHeight, top, bottom, xPxRange, left, right, lineStyle) = InitializeDrawingElements(ohlc, leftValue);
 
             // Step 2: Render a white background
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, this.DisplayTradesBar);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, this.DisplayVolumesBar);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, this.DisplayTradesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, this.DisplayVolumesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, false, false);
 
             // Step 3: Re Initialize the drawing elements
             (rowHeight, top, bottom, xPxRange, left, right, lineStyle) = InitializeDrawingElements(ohlc, leftValue); 
 
             // Step 4: Render rows with datas
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Beige, Colors.Black, ohlc.Ticks.Sum(x => x.Trades).ToString(), this.DisplayTradesBar);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Orange.WithOpacity(maxVolume/ volumes), Colors.Black, ohlc.Ticks.Sum(x=> x.Volume).ToString(), this.DisplayVolumesBar);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, this.RisingFillStyle.Color.WithOpacity(volumes/ barTotalBuys), Colors.Black, ohlc.Ticks.Sum(x => x.BuyVolume).ToString(), true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, this.FallingFillStyle.Color.WithOpacity(volumes/ barTotalSells), Colors.Black, ohlc.Ticks.Sum(x => x.SellVolume).ToString(), true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, delta>0? Colors.Green : Colors.IndianRed, Colors.Black, delta.ToString(), true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Bisque, Colors.Black, string.Empty, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Beige, Colors.Black, ohlc.Ticks.Sum(x => x.Trades).ToString(), this.DisplayTradesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Orange.WithOpacity(maxVolume/ volumes), Colors.Black, ohlc.Ticks.Sum(x=> x.Volume).ToString(), this.DisplayVolumesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, this.RisingFillStyle.Color.WithOpacity(volumes/ barTotalBuys), Colors.Black, ohlc.Ticks.Sum(x => x.BuyVolume).ToString(), true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, this.FallingFillStyle.Color.WithOpacity(volumes/ barTotalSells), Colors.Black, ohlc.Ticks.Sum(x => x.SellVolume).ToString(), true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, delta>0? Colors.Green : Colors.IndianRed, Colors.Black, delta.ToString(), true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Bisque, Colors.Black, string.Empty, false, false);
 
             // Step 5 
             (rowHeight, top, bottom, xPxRange, left, right, lineStyle) = InitializeDrawingElements(ohlc, leftValue, true);
 
             // Step 2: Render titles
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Trades", this.DisplayTradesBar);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Volumes" , this.DisplayVolumesBar);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Buy volumes", true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Sellvolumes", true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Delta", true);
-            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, string.Empty, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Trades", this.DisplayTradesBar, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Volumes" , this.DisplayVolumesBar, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Buy volumes", true, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Sell volumes", true, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Delta", true, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, string.Empty, false, true);
 
 
             // Step 3: Draw the bar
@@ -456,7 +454,7 @@ namespace Valhalla.Charting.CustomSeries
             return (rowHeight, top, bottom, xPxRange, left, right, lineStyle);
         }
          
-        private void RenderRow(OHLCDatas ohlc, RenderPack rp, SKPaint paint, int rowHeight, ref float top, ref float bottom, PixelRangeX xPxRange, ScottPlot.Color backColor, Color textColor, string text, bool shouldRender)
+        private void RenderRow(OHLCDatas ohlc, RenderPack rp, SKPaint paint, int rowHeight, ref float top, ref float bottom, PixelRangeX xPxRange, ScottPlot.Color backColor, Color textColor, string text, bool shouldRender, bool isTitle)
         {
             if (!shouldRender)
                 return;
@@ -475,18 +473,26 @@ namespace Valhalla.Charting.CustomSeries
 
             if (!string.IsNullOrEmpty(text))
             {
-                LabelStyle label = new LabelStyle()
+                // Define the LabelStyle
+                var label = new LabelStyle()
                 {
                     ForeColor = textColor,
                     FontSize = 10,
                     Text = text,
-                    Bold = true
+                    Bold = isTitle
                 };
 
+                // Measure the text size in pixels
                 var textSize = label.Measure();
-                float verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
-                float horizontalMiddle = (xPxRange.Right - xPxRange.Left) / 2;
-                Pixel pixel = new(((xPxRange.Left + horizontalMiddle) - (textSize.Width / 4)) - 2, verticalMiddle - (textSize.Height / 4));
+
+                // Calculate the proper middle positions
+                var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
+                var horizontalMiddle = (xPxRange.Right + xPxRange.Left) / 2;
+
+                // Adjust the pixel position to center the text
+                Pixel pixel = new(horizontalMiddle - (textSize.Width / 2), verticalMiddle - (textSize.Height / 2));
+
+                // Render the text
                 label.Render(rp.Canvas, pixel, paint);
             }
 
