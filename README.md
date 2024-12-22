@@ -96,5 +96,6 @@ Drawing Tools
 
 ## Contributors
 [Philippe Cortellezzi, SysAdmin, Spatial Center of CNES](https://www.linkedin.com/in/philippe-cortellezzi-808b45173/ "Philippe Cortellezzi's Linkedin")
+
 [Kaci Benaissa, Enginer](https://www.linkedin.com/in/kaci-benaissa-163a874a/ "Kaci Benaissa's Linkedin")
 
