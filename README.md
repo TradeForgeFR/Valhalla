@@ -84,8 +84,6 @@ Valhalla is released under the [MIT License](https://github.com/TradeForgeFR/Val
 
 ## Acknowledgments
 We thank the Avalonia UI and ScottPlot communities and our contributors for their invaluable support in making Valhalla a reality.
-### Contributors
-[Philippe Cortellezzi](https://www.linkedin.com/in/philippe-cortellezzi-808b45173/ "SysAdmin, Spatial Center of CNES")
 
 ---
 
@@ -95,3 +93,8 @@ Volumetrics
 
 Drawing Tools
 ![](/Images/draws.gif)
+
+## Contributors
+[Philippe Cortellezzi, SysAdmin, Spatial Center of CNES](https://www.linkedin.com/in/philippe-cortellezzi-808b45173/ "Philippe Cortellezzi's Linkedin")
+[Kaci Benaissa, Enginer](https://www.linkedin.com/in/kaci-benaissa-163a874a/ "Kaci Benaissa's Linkedin")
+
