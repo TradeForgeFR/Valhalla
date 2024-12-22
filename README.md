@@ -1,14 +1,14 @@
 # Valhalla Trading Platform
 
 ## Overview
-Valhalla Trading is an open-source, cross-platform trading software designed to empower traders in futures, cryptocurrencies, and conventional markets. Built using the Avalonia UI framework, it ensures seamless compatibility across Windows, macOS, and Linux. Our platform stands out for its customizable architecture, advanced charting tools, and plugin-friendly design, making it an ideal choice for traders and developers alike.
+Valhalla is an open-source, cross-platform trading software designed to empower traders in futures, cryptocurrencies, and conventional markets. Built using the Avalonia UI framework and ScottPlot, it ensures seamless compatibility across Windows, macOS, and Linux. Our platform stands out for its customizable architecture, advanced charting tools, and plugin-friendly design, making it an ideal choice for traders and developers alike.
 
 ---
 
 ## Key Features
 
 ### Cross-Platform Compatibility
-Valhalla Trading leverages Avalonia UI to deliver a consistent user experience across all major operating systems. Whether you're on Windows, macOS, or Linux, you can enjoy the same robust features without compromise.
+Valhalla leverages Avalonia UI to deliver a consistent user experience across all major operating systems. Whether you're on Windows, macOS, or Linux, you can enjoy the same robust features without compromise.
 
 ### Advanced Technical Analysis
 We have developed our own charting components, tailored for deep technical analysis. These tools provide:
@@ -28,19 +28,20 @@ Trade across a wide range of markets, including:
 - Futures
 - Cryptocurrencies
 - Traditional assets in conventional markets
+- Connect all your trading account in only one place (Using Rithmic, Tradovate and cryptocurrency exchange's API)
 
 ---
 
-## Why Choose Valhalla Trading?
+## Why Choose Valhalla ?
 
 ### Open Source
-Valhalla Trading is open-source, ensuring transparency, flexibility, and the opportunity to contribute to its development. The community-driven nature of the project fosters innovation and collaboration.
+Valhalla is open-source, ensuring transparency, flexibility, and the opportunity to contribute to its development. The community-driven nature of the project fosters innovation and collaboration.
 
 ### Developer-Friendly
 Developers can harness the power of Avalonia to create custom plugins and contribute to the platform. Detailed documentation and sample plugins are provided to kickstart your development journey.
 
 ### Cutting-Edge Tools
-With our proprietary charting components and high customizability, Valhalla Trading offers tools that rival the best commercial trading platforms, while remaining free and open-source.
+With our charting components and high customizability, Valhalla offers tools that rival the best commercial trading platforms, while remaining free and open-source.
 
 ---
 
@@ -72,15 +73,10 @@ With our proprietary charting components and high customizability, Valhalla Trad
 
 ## Contribution
 We welcome contributions from developers, designers, and traders! Here’s how you can help:
-- Report bugs and suggest features via [Issues](link-to-issues).
+- Report bugs and suggest features via [Issues](https://github.com/TradeForgeFR/Valhalla/issues).
 - Submit pull requests to improve the codebase.
 - Create and share plugins for the community.
 
-### Development Setup
-- Install the Avalonia UI development tools.
-- Follow our [Developer Guide](link-to-dev-guide) to set up your environment.
-
----
 
 ## Community and Support
 - Join our [Discord Server](link-to-discord) for real-time discussions.
@@ -90,12 +86,12 @@ We welcome contributions from developers, designers, and traders! Here’s how y
 ---
 
 ## License
-Valhalla Trading is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute the software.
+Valhalla is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute the software.
 
 ---
 
 ## Acknowledgments
-We thank the Avalonia UI community and our contributors for their invaluable support in making Valhalla Trading a reality.
+We thank the Avalonia UI community and our contributors for their invaluable support in making Valhalla a reality.
 
 ---
 
