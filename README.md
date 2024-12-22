@@ -61,10 +61,6 @@ With our charting components and high customizability, Valhalla offers tools tha
    dotnet run
    ```
 
-### Exploring Plugins
-- Visit our [Plugin Documentation](link-to-plugin-docs) to learn how to create and integrate plugins.
-- Try out existing plugins from our community library.
-
 ---
 
 ## Contribution
@@ -75,8 +71,7 @@ We welcome contributions from developers, designers, and traders! Here’s how y
 
 
 ## Community and Support
-Comming soon
----
+Comming soon.
 
 ## License
 Valhalla is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute the software.
