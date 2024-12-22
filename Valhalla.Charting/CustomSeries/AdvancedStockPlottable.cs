@@ -72,7 +72,6 @@ namespace Valhalla.Charting.CustomSeries
             get { return this._volumetricType; }
             set
             {
-                this._volumetricType = value;
                 this.RaiseAndSetIfChanged(ref this._volumetricType, value);
             }
         }
