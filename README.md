@@ -47,10 +47,6 @@ With our charting components and high customizability, Valhalla offers tools tha
 
 ## Getting Started
 
-### Prerequisites
-- Install .NET SDK (6.0 or later).
-- Supported operating systems: Windows, macOS, Linux.
-
 ### Installation
 1. Clone the repository:
    ```sh
