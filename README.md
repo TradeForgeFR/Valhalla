@@ -58,7 +58,7 @@ With our charting components and high customizability, Valhalla offers tools tha
    ```
 2. Navigate to the project directory:
    ```sh
-   cd valhalla-trading
+   cd valhalla
    ```
 3. Build and run the application:
    ```sh
