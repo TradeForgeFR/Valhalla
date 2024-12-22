@@ -93,28 +93,6 @@ namespace Valhalla.Charting.CustomSeries
             return new(left, right, limits.Bottom, limits.Top);
         }
 
-        public CoordinateRange GetPriceRangeInView()
-        {
-            var ohlcs = Data.GetOHLCs();
-            if (ohlcs.Count == 0)
-                return CoordinateRange.NoLimits;
-
-            int minIndexInView = (int)NumericConversion.Clamp(Axes.XAxis.Min, 0, ohlcs.Count - 1);
-            int maxIndexInView = (int)NumericConversion.Clamp(Axes.XAxis.Max, 0, ohlcs.Count - 1);
-
-            var result = Data.GetPriceRange(minIndexInView, maxIndexInView);
-
-            return result;
-        }
-
-        public (int index, OHLC ohlc)? GetOhlcNearX(double x)
-        {
-            int ohlcIndex = (int)Math.Round(x);
-            return (ohlcIndex >= 0 && ohlcIndex < Data.Count)
-                ? (ohlcIndex, Data.GetOHLCs()[ohlcIndex])
-                : null;
-        }
-
         public double PixelsBetweenCandles()
         {
             var ohlcs = this.Data.GetOHLCs();
