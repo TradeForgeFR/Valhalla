@@ -54,7 +54,7 @@ With our charting components and high customizability, Valhalla offers tools tha
 ### Installation
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-repository/valhalla-trading.git
+   git clone  https://github.com/TradeForgeFR/Valhalla.git  
    ```
 2. Navigate to the project directory:
    ```sh
