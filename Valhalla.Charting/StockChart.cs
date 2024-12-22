@@ -41,7 +41,7 @@ namespace Valhalla.Charting
         {
             foreach(var bar in bars)
             {
-                bar.Ticks = bar.Generate(10, 100);
+                bar.Ticks = bar.Generate(5, 100);
             }
 
             this._priceSerie.Datas = bars;

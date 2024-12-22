@@ -17,6 +17,10 @@
                 Command="{Binding StockChart.DrawingObjectsManager.StartDrawingFibonacciCommand} "/>
       <CheckBox Content="Use Volumetrics"
                 IsChecked="{Binding StockChart.PricesPlot.UseVolumetric, Mode=TwoWay} "/>
+        <CheckBox Content="Trades"
+               IsChecked="{Binding StockChart.PricesPlot.DisplayTradesBar, Mode=TwoWay} "/>
+        <CheckBox Content="Volumes"
+               IsChecked="{Binding StockChart.PricesPlot.DisplayVolumesBar, Mode=TwoWay} "/>
       <ComboBox ItemsSource="{Binding StockChart.PricesPlot.VolumetricsTypeList}"
                 SelectedValue="{Binding StockChart.PricesPlot.SelectedVolumetricType, Mode=TwoWay}"/>
         <ComboBox ItemsSource="{Binding StockChart.PricesPlot.StatisticsBarEdgeList}"
