@@ -21,10 +21,10 @@ namespace Valhalla.Charting.CustomSeries
     public class AdvancedStockPlottable : ReactiveObject, IPlottable
     {
         private string _risingHex = "#e85c58", _failingHex = "#e85c58";
-        private bool _useVolumetrics = false;
+        private bool _useVolumetrics = false, _displayTradesBar = true, _displayVolumesBar = true;
         private StatisticsBarEdge _statisticsBarEdge = StatisticsBarEdge.None;
         private VolumetricType _volumetricType = VolumetricType.ValueArea;
-
+        private int _barStatisticHeight = 20;
 
         public List<StatisticsBarEdge> StatisticsBarEdgeList { get; set; } = Enum.GetValues(typeof(StatisticsBarEdge)).Cast<StatisticsBarEdge>().ToList();
         public List<VolumetricType> VolumetricsTypeList { get; set; } = Enum.GetValues(typeof(VolumetricType)).Cast<VolumetricType>().ToList();
@@ -38,8 +38,25 @@ namespace Valhalla.Charting.CustomSeries
             set
             {
                 this.RaiseAndSetIfChanged(ref this._useVolumetrics, value);
+            } 
+        }
+
+        public bool DisplayTradesBar
+        {
+            get { return this._displayTradesBar; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this._displayTradesBar, value);
             }
-            
+        }
+
+        public bool DisplayVolumesBar
+        {
+            get { return this._displayVolumesBar; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this._displayVolumesBar, value);
+            }
         }
 
         public StatisticsBarEdge SelectedStatisticsBarEdge
@@ -55,7 +72,6 @@ namespace Valhalla.Charting.CustomSeries
             get { return this._volumetricType; }
             set
             {
-                this._volumetricType = value;
                 this.RaiseAndSetIfChanged(ref this._volumetricType, value);
             }
         }
@@ -82,26 +98,7 @@ namespace Valhalla.Charting.CustomSeries
         public FillStyle FallingFillStyle { get; } = new()
         {
             Color = Color.FromHex("#e85c58"),
-        };
-
-        public Color RisingColor
-        {
-            set
-            {
-                RisingLineStyle.Color = value;
-                RisingFillStyle.Color = value;
-            }
-        }
-
-        public Color FallingColor
-        {
-            set
-            {
-                FallingLineStyle.Color = value;
-                FallingFillStyle.Color = value;
-            }
-        }
-
+        }; 
         public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
 
         public AxisLimits GetAxisLimits()
@@ -219,6 +216,9 @@ namespace Valhalla.Charting.CustomSeries
 
         private void RenderValueArea(OHLCDatas ohlc, double centerNumber, float xPxRight, RenderPack rp)
         {
+            if (ohlc.Ticks.Count == 0)
+                return;
+
             using SKPaint paint = new();
 
             float top = Axes.GetPixelY(ohlc.High);
@@ -262,9 +262,9 @@ namespace Valhalla.Charting.CustomSeries
                 var text = new LabelStyle()
                 {
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
-                    FontSize = Math.Min(.8f * boxHeight, smallesFontSize),
+                    FontSize = Math.Min(.5f * boxHeight, smallesFontSize),
                     Text = tradeList[x].Volume.ToString(),
-                    Bold = true
+                    Bold = tradeList[x].Volume == bigestVolume
                 };
 
                 // get the textSize in pixels
@@ -281,6 +281,9 @@ namespace Valhalla.Charting.CustomSeries
 
         private void RenderFootPrint(OHLCDatas ohlc, double centerNumber, float xPxRight, RenderPack rp)
         {
+            if (ohlc.Ticks.Count == 0)
+                return;
+
             using SKPaint paint = new();
 
             float top = Axes.GetPixelY(ohlc.High);
@@ -336,11 +339,12 @@ namespace Valhalla.Charting.CustomSeries
                     ForeColor = tradeList[x].Volume == bigestVolume ? Colors.White : Colors.Black,
                     FontSize = Math.Min(.5f * boxHeight, smallesFontSize),
                     Text = tradeList[x].SellVolume.ToString(),
-                    Bold = true
+                    Bold = tradeList[x].Volume == bigestVolume
                 };
 
                 // get the textSize in pixels
                 var textSize = text.Measure();
+
 
                 // draw bids text
                 var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
@@ -373,25 +377,72 @@ namespace Valhalla.Charting.CustomSeries
 
         private void RenderBottomPanel(OHLCDatas ohlc, double leftValue, RenderPack rp)
         {
-            if(this.SelectedStatisticsBarEdge == StatisticsBarEdge.None)
+            if (this.SelectedStatisticsBarEdge == StatisticsBarEdge.None)
                 return;
 
+            // make basic calculations
+            var volumes = ohlc.Ticks.Sum(x => x.Volume);
+            var barTotalBuys = ohlc.Ticks.Sum(x => x.BuyVolume);
+            var barTotalSells = ohlc.Ticks.Sum(x => x.SellVolume);
+            var delta = barTotalBuys - barTotalSells;
+            var isDivergent = ohlc.Open > ohlc.Close && delta > 0;
+            var maxVolume = this.Datas.Max(x=> x.Ticks.Sum(t  => t.Volume));  
             using SKPaint paint = new();
-            var rowHeight = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? 15 : -15;
 
+            // Step 1: Initialize the drawing elements
+            var (rowHeight, top, bottom, xPxRange, left, right, lineStyle) = InitializeDrawingElements(ohlc, leftValue);
+
+            // Step 2: Render a white background
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, this.DisplayTradesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, this.DisplayVolumesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.White, Colors.White, string.Empty, false, false);
+
+            // Step 3: Re Initialize the drawing elements
+            (rowHeight, top, bottom, xPxRange, left, right, lineStyle) = InitializeDrawingElements(ohlc, leftValue); 
+
+            // Step 4: Render rows with datas
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Beige, Colors.Black, ohlc.Ticks.Sum(x => x.Trades).ToString(), this.DisplayTradesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Orange.WithOpacity(maxVolume/ volumes), Colors.Black, ohlc.Ticks.Sum(x=> x.Volume).ToString(), this.DisplayVolumesBar, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, this.RisingFillStyle.Color.WithOpacity(volumes/ barTotalBuys), Colors.Black, ohlc.Ticks.Sum(x => x.BuyVolume).ToString(), true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, this.FallingFillStyle.Color.WithOpacity(volumes/ barTotalSells), Colors.Black, ohlc.Ticks.Sum(x => x.SellVolume).ToString(), true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, delta>0? Colors.Green : Colors.IndianRed, Colors.Black, delta.ToString(), true, false);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Bisque, Colors.Black, string.Empty, false, false);
+
+            // Step 5 
+            (rowHeight, top, bottom, xPxRange, left, right, lineStyle) = InitializeDrawingElements(ohlc, leftValue, true);
+
+            // Step 2: Render titles
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Trades", this.DisplayTradesBar, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Volumes" , this.DisplayVolumesBar, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Buy volumes", true, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Sell volumes", true, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, "Delta", true, true);
+            RenderRow(ohlc, rp, paint, rowHeight, ref top, ref bottom, xPxRange, Colors.Black, Colors.White, string.Empty, false, true);
+
+
+            // Step 3: Draw the bar
+            // DrawStatisticsBar(left, right, top, bottom, rp, paint, lineStyle, ohlc);
+        }
+
+        private (int rowHeight, float top, float bottom, PixelRangeX xPxRange, float left, float right, LineStyle lineStyle) InitializeDrawingElements(OHLCDatas ohlc, double leftValue, bool isForTitle = false)
+        {
+            var rowHeight = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? _barStatisticHeight : -_barStatisticHeight;
             float top = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) - rowHeight : Axes.GetPixelY(this.Axes.YAxis.Max) - rowHeight;
             float bottom = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
 
-            var days = ohlc.TimeSpan.TotalDays;// * .91;
-            var left = Axes.GetPixelX(leftValue)-1;
-            var right = Axes.GetPixelX(leftValue + days)+1;
-            PixelRangeX xPxRange = new(left, right);
+            var days = ohlc.TimeSpan.TotalDays;
+            var left = Axes.GetPixelX(leftValue) - 1;
+            var right = Axes.GetPixelX(leftValue + days) + 1;
 
-
-            FillStyle rangeStyle = new FillStyle()
+            if (isForTitle)
             {
-                Color = Colors.Beige
-            };
+                left = Axes.GetPixelX(this.Axes.XAxis.Max) - 80;
+                right = Axes.GetPixelX(this.Axes.XAxis.Max);
+            }
+            PixelRangeX xPxRange = new(left, right);
 
             LineStyle lineStyle = new LineStyle()
             {
@@ -399,57 +450,68 @@ namespace Valhalla.Charting.CustomSeries
                 Width = 0.5f
             };
 
+            return (rowHeight, top, bottom, xPxRange, left, right, lineStyle);
+        }
+         
+        private void RenderRow(OHLCDatas ohlc, RenderPack rp, SKPaint paint, int rowHeight, ref float top, ref float bottom, PixelRangeX xPxRange, ScottPlot.Color backColor, Color textColor, string text, bool shouldRender, bool isTitle)
+        {
+            if (!shouldRender)
+                return;
+            
+            FillStyle rangeStyle = new FillStyle()
+            {
+                Color = backColor
+            };
 
-            //row 1
-            PixelRangeY yPxRange = new(bottom, top);            
+            PixelRangeY yPxRange = new(bottom, top);
             PixelRect rect = new(xPxRange, yPxRange);
             rangeStyle.Render(rp.Canvas, rect, paint);
-            var line = new PixelLine(left, top, right, top);
-            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
-            //row 2
+            PixelLine line = new PixelLine(xPxRange.Left, top, xPxRange.Right, top);
+            Drawing.DrawLine(rp.Canvas, paint, line, new LineStyle { Color = Colors.Black, Width = 0.5f });
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                // Define the LabelStyle
+                var label = new LabelStyle()
+                {
+                    ForeColor = textColor,
+                    FontSize = 10,
+                    Text = text,
+                    Bold = isTitle
+                };
+
+                // Measure the text size in pixels
+                var textSize = label.Measure();
+
+                // Calculate the proper middle positions
+                var verticalMiddle = (yPxRange.Top + yPxRange.Bottom) / 2;
+                var horizontalMiddle = (xPxRange.Right + xPxRange.Left) / 2;
+
+                // Adjust the pixel position to center the text
+                Pixel pixel = new(horizontalMiddle - (textSize.Width / 2), verticalMiddle - (textSize.Height / 2));
+
+                // Render the text
+                label.Render(rp.Canvas, pixel, paint);
+            }
+
             top -= rowHeight;
             bottom -= rowHeight;
-            rangeStyle.Color = Colors.Red;
-            yPxRange = new(bottom, top);
-            rect = new(xPxRange, yPxRange);
-            rangeStyle.Render(rp.Canvas, rect, paint);
-            line = new PixelLine(left, top, right, top);
+        }
+
+        private void DrawStatisticsBar(float left, float right, float top, float bottom, RenderPack rp, SKPaint paint, LineStyle lineStyle, OHLCDatas ohlc)
+        {
+            var y = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
+            PixelLine line = new PixelLine(left, top, left, y);
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
-            //row 3
-            top -= rowHeight;
-            bottom -= rowHeight;
-            rangeStyle.Color = Colors.Blue;
-            yPxRange = new(bottom, top);
-            rect = new(xPxRange, yPxRange);
-            rangeStyle.Render(rp.Canvas, rect, paint);
-            line = new PixelLine(left, top, right, top);
-            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
-
-            //row 4
-            top -= rowHeight;
-            bottom -= rowHeight;
-            rangeStyle.Color = Colors.Green;
-            yPxRange = new(bottom, top);
-            rect = new(xPxRange, yPxRange);
-            rangeStyle.Render(rp.Canvas, rect, paint);
-            line = new PixelLine(left, top, right, top);
-            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
-
-            // draw the  bar
-            var y =  this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
-            line = new PixelLine(left, top, left, y);
-            Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
-
-            var barsCount = this.Datas.Count-1;
-            var index =this.Datas.IndexOf(ohlc);
+            var barsCount = this.Datas.Count - 1;
+            var index = this.Datas.IndexOf(ohlc);
             if (barsCount == index)
             {
                 line = new PixelLine(right, top, right, y);
                 Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
-            }            
+            }
         }
     }
-
 }
