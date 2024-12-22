@@ -79,10 +79,7 @@ We welcome contributions from developers, designers, and traders! Here’s how y
 
 
 ## Community and Support
-- Join our [Discord Server](link-to-discord) for real-time discussions.
-- Participate in forums and share your ideas.
-- Follow our updates on [Twitter](link-to-twitter) and [GitHub](link-to-github).
-
+Comming soon
 ---
 
 ## License
@@ -91,7 +88,7 @@ Valhalla is released under the [MIT License](LICENSE). Feel free to use, modify,
 ---
 
 ## Acknowledgments
-We thank the Avalonia UI community and our contributors for their invaluable support in making Valhalla a reality.
+We thank the Avalonia UI and ScottPlot communities and our contributors for their invaluable support in making Valhalla a reality.
 
 ---
 
