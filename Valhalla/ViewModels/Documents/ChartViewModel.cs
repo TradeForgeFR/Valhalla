@@ -7,6 +7,7 @@ using ScottPlot;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Valhalla.Charting;
+using Valhalla.TechnicalAnalysis.Models;
 
 namespace Valhalla.ViewModels.Documents;
 
@@ -32,11 +33,11 @@ public class ChartViewModel : Document
 
         if (request.Success)
         {
-            var bars = request.Data.Result.Select(x => new OHLC((double)x.OpenPrice, (double)x.HighPrice, (double)x.LowPrice, (double)x.ClosePrice, x.OpenTime, TimeSpan.FromMinutes(1))).ToArray();
+            var bars = request.Data.Result.Select(x => new OHLCDatas((double)x.OpenPrice, (double)x.HighPrice, (double)x.LowPrice, (double)x.ClosePrice, x.OpenTime, TimeSpan.FromMinutes(1))).ToArray();
             
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                this.StockChart.FillPrice(bars);
+                this.StockChart.FillPrice(bars.ToList());
             }, DispatcherPriority.Background);
         }
         else

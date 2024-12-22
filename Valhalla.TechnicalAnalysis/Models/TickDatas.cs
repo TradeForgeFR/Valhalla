@@ -24,5 +24,4 @@
         public long SellTrades { get; set; }
         public DateTime Time { get; set; }
     }
-
 }

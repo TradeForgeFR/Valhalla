@@ -1,10 +1,9 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
-using ScottPlot;
 using ScottPlot.Avalonia;
-using ScottPlot.DataSources;
 using Valhalla.Charting.CustomSeries;
 using Valhalla.Charting.Managers;
+using Valhalla.TechnicalAnalysis.Models;
 
 namespace Valhalla.Charting
 {
@@ -12,7 +11,7 @@ namespace Valhalla.Charting
     {
         #region private
         private AvaPlot _avaplot;
-        private AdvancedStockPlottable _priceSerie;
+        private AdvancedStockPlottable _priceSerie = new AdvancedStockPlottable();
         private Grid _avaPlotHost; 
         #endregion
 
@@ -22,6 +21,8 @@ namespace Valhalla.Charting
             this._avaPlotHost = new Grid();
             this._avaPlotHost.Children.Add(this._avaplot);
             this.DrawingObjectsManager.AddPlot(this._avaplot);
+            this.AvaPlot.Plot.Add.Plottable(this._priceSerie);
+            this.AvaPlot.Plot.Axes.DateTimeTicksBottom();
         }
 
         #region Public Fields
@@ -31,71 +32,21 @@ namespace Valhalla.Charting
 
         public DrawingObjectsManager DrawingObjectsManager { get; } = new DrawingObjectsManager();
 
-        public AdvancedStockPlottable PriceSerie { get {  return this._priceSerie; } }
+        public AdvancedStockPlottable PricesPlot { get {  return this._priceSerie; } }
 
-        public bool? UseVolumetric
-        {
-            get => this._priceSerie?.UseVolumetric;
-            set
-            {
-                this._priceSerie!.UseVolumetric = value!.Value;
-                this.AvaPlot.Refresh();
-                this.RaisePropertyChanged(nameof(UseVolumetric));
-            }
-        }
-          
-        public List<VolumetricType> VolumetricsType { get; set; } = Enum.GetValues(typeof(VolumetricType)).Cast<VolumetricType>().ToList();
-
-        public VolumetricType? SelectedVolumetricType
-        {
-            get => this._priceSerie?.SelectedVolumetricType;
-            set
-            {
-                if (!value.HasValue)
-                    return;
-                this._priceSerie!.SelectedVolumetricType = value!.Value;
-                this.AvaPlot.Refresh();
-                this.RaisePropertyChanged(nameof(SelectedVolumetricType));
-            }
-        }
-
-        public List<StatisticsBarEdge> StatisticsBarEdge { get; set; } = Enum.GetValues(typeof(StatisticsBarEdge)).Cast<StatisticsBarEdge>().ToList();
-
-        public StatisticsBarEdge? SelectedStatisticsBarEdge
-        {
-            get => this._priceSerie?.StatisticsBarEdge;
-            set
-            {
-                if (!value.HasValue)
-                    return;
-                this._priceSerie!.StatisticsBarEdge = value!.Value;
-                this.AvaPlot.Refresh();
-                this.RaisePropertyChanged(nameof(SelectedStatisticsBarEdge));
-            }
-        }
+   
         #endregion
 
-        public void FillPrice(OHLC[] bars)
+        public void FillPrice(List<OHLCDatas> bars)
         {
-            var ticks = new List<List<TickAnalysis>>();
-
-            foreach(OHLC bar in bars)
+            foreach(var bar in bars)
             {
-                var listOfTrade = bar.Generate(10, 100);
-                ticks.Add(listOfTrade);
+                bar.Ticks = bar.Generate(10, 100);
             }
 
-            OHLCSourceList dataSource = new(bars.ToList());
-            this._priceSerie = new AdvancedStockPlottable(dataSource,ticks);
-
-            this.AvaPlot.Plot.Add.Plottable(this._priceSerie);
-            this.AvaPlot.Plot.Axes.DateTimeTicksBottom();
-
-            this.AvaPlot.Plot.PlotControl!.Refresh();
-
-            this.RaisePropertyChanged(nameof(this.SelectedStatisticsBarEdge));
-            this.RaisePropertyChanged(nameof(this.SelectedVolumetricType));
-            this.RaisePropertyChanged(nameof(this.UseVolumetric));
+            this._priceSerie.Datas = bars;
+           
+            this.AvaPlot.Plot.Axes.AutoScale();
         }
     }
 
@@ -104,9 +55,9 @@ namespace Valhalla.Charting
     {
         private static Random random = new Random();
          
-        public static List<TickAnalysis> Generate(this OHLC candle, double tickSize, int maxTicksInCandle)
+        public static List<TickDatas> Generate(this OHLCDatas candle, double tickSize, int maxTicksInCandle)
         {
-            var result = new List<TickAnalysis>();
+            var result = new List<TickDatas>();
             var range = (candle.High - candle.Low) / tickSize;
             range = range < 1 ? 1 : range;
 
@@ -122,14 +73,12 @@ namespace Valhalla.Charting
                 long buyTrades = (long)(random.NextDouble() * trades);
                 long sellTrades = trades - buyTrades;
 
-                TickAnalysis tick = new TickAnalysis
+                TickDatas tick = new TickDatas
                 {
-                    Price = price,
-                    Volume = buyVolume+sellVolume,
+                    Price = price, 
                     Delta = delta,
                     BuyVolume = buyVolume,
-                    SellVolume = sellVolume,
-                    Trades = trades,
+                    SellVolume = sellVolume, 
                     BuyTrades = buyTrades,
                     SellTrades = sellTrades,
                     //Time = tickTime
@@ -140,19 +89,5 @@ namespace Valhalla.Charting
 
             return result;
         }
-    }
-
-
-    public class TickAnalysis
-    {
-        public double Price { get; set; }
-        public double Volume { get; set; }
-        public long Delta { get; set; }
-        public double BuyVolume { get; set; }
-        public double SellVolume { get; set; }
-        public long Trades { get; set; }
-        public long BuyTrades { get; set; }
-        public long SellTrades { get; set; }
-        public DateTime Time { get; set; }
     }
 }

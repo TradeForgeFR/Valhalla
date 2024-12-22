@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using ReactiveUI;
 using ScottPlot;
 using SkiaSharp;
 using Valhalla.TechnicalAnalysis.Models;
@@ -8,7 +9,7 @@ namespace Valhalla.Charting.CustomSeries
     public enum VolumetricType:int
     {
         ValueArea=0,
-        FootPrint=1
+        BidAsk=1
     }
 
     public enum StatisticsBarEdge
@@ -17,25 +18,49 @@ namespace Valhalla.Charting.CustomSeries
         Bottom,
         None
     }
-    public class AdvancedStockPlottable(IOHLCSource data, List<List<TickAnalysis>> ticks) : IPlottable
+    public class AdvancedStockPlottable : ReactiveObject, IPlottable
     {
         private string _risingHex = "#e85c58", _failingHex = "#e85c58";
-        public List<List<TickAnalysis>> Ticks { get; } = ticks;
+        private bool _useVolumetrics = false;
+        private StatisticsBarEdge _statisticsBarEdge = StatisticsBarEdge.None;
+        private VolumetricType _volumetricType = VolumetricType.ValueArea;
+
+
+        public List<StatisticsBarEdge> StatisticsBarEdgeList { get; set; } = Enum.GetValues(typeof(StatisticsBarEdge)).Cast<StatisticsBarEdge>().ToList();
+        public List<VolumetricType> VolumetricsTypeList { get; set; } = Enum.GetValues(typeof(VolumetricType)).Cast<VolumetricType>().ToList();
         public bool IsVisible { get; set; } = true;
 
         public IAxes Axes { get; set; } = new Axes();
 
-        public IOHLCSource Data { get; } = data;
+        public bool UseVolumetric
+        {
+            get { return this._useVolumetrics; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this._useVolumetrics, value);
+            }
+            
+        }
 
-        public bool UseVolumetric { get; set; } = true;
+        public StatisticsBarEdge SelectedStatisticsBarEdge
+        {
+            get { return this._statisticsBarEdge; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this._statisticsBarEdge, value);
+            }
+        }
+        public VolumetricType SelectedVolumetricType
+        {
+            get { return this._volumetricType; }
+            set
+            {
+                this._volumetricType = value;
+                this.RaiseAndSetIfChanged(ref this._volumetricType, value);
+            }
+        }
 
-        public StatisticsBarEdge StatisticsBarEdge { get; set; } = StatisticsBarEdge.Top;
-        public VolumetricType SelectedVolumetricType { get; set; } = VolumetricType.FootPrint;
-
-        /// <summary>
-        /// Fractional width of the candle symbol relative to its time span
-        /// </summary>
-        public double SymbolWidth = 0.1;
+        public List<OHLCDatas> Datas { get; set; } = new List<OHLCDatas>();
 
         public LineStyle RisingLineStyle { get; } = new()
         {
@@ -80,32 +105,30 @@ namespace Valhalla.Charting.CustomSeries
         public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
 
         public AxisLimits GetAxisLimits()
-        {
-            AxisLimits limits = Data.GetLimits(); // TODO: Data.GetSequentialLimits()
+        { 
+            if (this.Datas.Count == 0)
+                return new(0,0,0,0);
 
-            var ohlcs = Data.GetOHLCs();
-            if (ohlcs.Count == 0)
-                return limits;
+            double left = this.Datas.First().Time.ToOADate() - this.Datas.First().TimeSpan.TotalDays / 2;
+            double right = this.Datas.Last().Time.ToOADate() + this.Datas.Last().TimeSpan.TotalDays / 2;
+            double bottom = this.Datas.Min(x => x.Low);
+            double top = this.Datas.Max(x => x.High);
 
-            double left = ohlcs.First().DateTime.ToOADate() - ohlcs.First().TimeSpan.TotalDays / 2;
-            double right = ohlcs.Last().DateTime.ToOADate() + ohlcs.Last().TimeSpan.TotalDays / 2;
-
-            return new(left, right, limits.Bottom, limits.Top);
+            return new(left, right, bottom, top);
         }
 
         public double PixelsBetweenCandles()
-        {
-            var ohlcs = this.Data.GetOHLCs();
-            if (ohlcs.Count == 0 || ohlcs.Count < 2) return 0;
+        { 
+            if (this.Datas.Count == 0 || this.Datas.Count < 2) return 0;
 
-            var ohlc1 = ohlcs[0];
-            var ohlc2 = ohlcs[1];
+            var ohlc1 = this.Datas[0];
+            var ohlc2 = this.Datas[1];
 
-            double centerNumber = NumericConversion.ToNumber(ohlc1.DateTime);
+            double centerNumber = NumericConversion.ToNumber(ohlc1.Time);
             var center = Axes.GetPixelX(centerNumber);
 
 
-            double centerNumber2 = NumericConversion.ToNumber(ohlc2.DateTime);
+            double centerNumber2 = NumericConversion.ToNumber(ohlc2.Time);
             var center2 = Axes.GetPixelX(centerNumber2);
 
             return Math.Abs(center - center2);
@@ -114,16 +137,15 @@ namespace Valhalla.Charting.CustomSeries
         public virtual void Render(RenderPack rp)
         {
             using SKPaint paint = new();
-
-            var ohlcs = Data.GetOHLCs();
+             
 
             // ensure there is at list 60 pixels between the candles 
             var spaceBetweenCandles = this.PixelsBetweenCandles();
             var isSpaceEnough = spaceBetweenCandles >= 60;
 
-            for (int i = 0; i < ohlcs.Count; i++)
+            for (int i = 0; i < this.Datas.Count; i++)
             {
-                OHLC ohlc = ohlcs[i];
+                OHLCDatas ohlc = this.Datas[i];
                 bool isRising = ohlc.Close >= ohlc.Open;
                 LineStyle lineStyle = isRising ? RisingLineStyle : FallingLineStyle;
                 FillStyle fillStyle = isRising ? RisingFillStyle : FallingFillStyle;
@@ -133,9 +155,9 @@ namespace Valhalla.Charting.CustomSeries
 
                 float center, xPxLeft, xPxRight;
 
-                double centerNumber = NumericConversion.ToNumber(ohlc.DateTime);
+                double centerNumber = NumericConversion.ToNumber(ohlc.Time);
                 center = Axes.GetPixelX(centerNumber);
-                double halfWidthNumber = (this.UseVolumetric && isSpaceEnough) ? ohlc.TimeSpan.TotalDays / 2 * SymbolWidth : ohlc.TimeSpan.TotalDays / 2 * .8;
+                double halfWidthNumber = (this.UseVolumetric && isSpaceEnough) ? ohlc.TimeSpan.TotalDays / 2 * .1 : ohlc.TimeSpan.TotalDays / 2 * .8;
                 xPxLeft = Axes.GetPixelX(centerNumber - halfWidthNumber);
                 xPxRight = Axes.GetPixelX(centerNumber + halfWidthNumber);
 
@@ -177,10 +199,10 @@ namespace Valhalla.Charting.CustomSeries
                             switch (this.SelectedVolumetricType)
                             {
                                 case VolumetricType.ValueArea:
-                                    this.RenderValueArea(ohlc, centerNumber, xPxRight, paint, rp);
+                                    this.RenderValueArea(ohlc, centerNumber, xPxRight, rp);
                                     break;
-                                case VolumetricType.FootPrint:
-                                    this.RenderFootPrint(ohlc, centerNumber, xPxRight, paint, rp);
+                                case VolumetricType.BidAsk:
+                                    this.RenderFootPrint(ohlc, centerNumber, xPxRight, rp);
                                     break;
                             }
 
@@ -195,8 +217,10 @@ namespace Valhalla.Charting.CustomSeries
             }
         }
 
-        private void RenderValueArea(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
+        private void RenderValueArea(OHLCDatas ohlc, double centerNumber, float xPxRight, RenderPack rp)
         {
+            using SKPaint paint = new();
+
             float top = Axes.GetPixelY(ohlc.High);
             float bottom = Axes.GetPixelY(ohlc.Low);
 
@@ -210,7 +234,7 @@ namespace Valhalla.Charting.CustomSeries
                 Color = Colors.Black
             };
 
-            var tradeList = this.Ticks[this.Data.GetOHLCs().IndexOf(ohlc)];
+            var tradeList = ohlc.Ticks;
             int tickCount = tradeList.Count - 1;
             var tickRange = (top - bottom) / tickCount;
             var bigestVolume = tradeList.Max(x => x.Volume);
@@ -255,8 +279,10 @@ namespace Valhalla.Charting.CustomSeries
             }
         }
 
-        private void RenderFootPrint(OHLC ohlc, double centerNumber, float xPxRight, SKPaint paint, RenderPack rp)
+        private void RenderFootPrint(OHLCDatas ohlc, double centerNumber, float xPxRight, RenderPack rp)
         {
+            using SKPaint paint = new();
+
             float top = Axes.GetPixelY(ohlc.High);
             float bottom = Axes.GetPixelY(ohlc.Low);
 
@@ -275,7 +301,7 @@ namespace Valhalla.Charting.CustomSeries
                 Width = 0.5f
             };
 
-            var tradeList = this.Ticks[this.Data.GetOHLCs().IndexOf(ohlc)];
+            var tradeList = ohlc.Ticks;
             int tickCount = tradeList.Count - 1;
             var tickRange = (top - bottom) / tickCount;
             var bigestVolume = tradeList.Max(x => x.Volume);
@@ -345,16 +371,16 @@ namespace Valhalla.Charting.CustomSeries
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
         }
 
-        private void RenderBottomPanel(OHLC ohlc, double leftValue, RenderPack rp)
+        private void RenderBottomPanel(OHLCDatas ohlc, double leftValue, RenderPack rp)
         {
-            if(this.StatisticsBarEdge == StatisticsBarEdge.None)
+            if(this.SelectedStatisticsBarEdge == StatisticsBarEdge.None)
                 return;
 
             using SKPaint paint = new();
-            var rowHeight = this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? 15 : -15;
+            var rowHeight = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? 15 : -15;
 
-            float top = this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) - rowHeight : Axes.GetPixelY(this.Axes.YAxis.Max) - rowHeight;
-            float bottom = this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
+            float top = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) - rowHeight : Axes.GetPixelY(this.Axes.YAxis.Max) - rowHeight;
+            float bottom = this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
 
             var days = ohlc.TimeSpan.TotalDays;// * .91;
             var left = Axes.GetPixelX(leftValue)-1;
@@ -412,12 +438,12 @@ namespace Valhalla.Charting.CustomSeries
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
             // draw the  bar
-            var y =  this.StatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
+            var y =  this.SelectedStatisticsBarEdge == StatisticsBarEdge.Bottom ? Axes.GetPixelY(this.Axes.YAxis.Min) : Axes.GetPixelY(this.Axes.YAxis.Max);
             line = new PixelLine(left, top, left, y);
             Drawing.DrawLine(rp.Canvas, paint, line, lineStyle);
 
-            var barsCount = this.Data.GetOHLCs().Count()-1;
-            var index = this.Data.GetOHLCs().IndexOf(ohlc);
+            var barsCount = this.Datas.Count-1;
+            var index =this.Datas.IndexOf(ohlc);
             if (barsCount == index)
             {
                 line = new PixelLine(right, top, right, y);
