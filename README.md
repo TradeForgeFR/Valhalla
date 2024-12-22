@@ -75,7 +75,8 @@ We welcome contributions from developers, designers, and traders! Here’s how y
 
 
 ## Community and Support
-[Discord](https://discord.gg/XWf7bjjcTz)
+Comming soon on Discord and Telegram
+
 ## License
 Valhalla is released under the [MIT License](https://github.com/TradeForgeFR/Valhalla/blob/main/LICENCE.txt). Feel free to use, modify, and distribute the software.
 
@@ -92,3 +93,8 @@ Volumetrics
 
 Drawing Tools
 ![](/Images/draws.gif)
+
+## Contributors
+[Philippe Cortellezzi, SysAdmin, Spatial Center of CNES](https://www.linkedin.com/in/philippe-cortellezzi-808b45173/ "Philippe Cortellezzi's Linkedin")
+[Kaci Benaissa, Enginer](https://www.linkedin.com/in/kaci-benaissa-163a874a/ "Kaci Benaissa's Linkedin")
+
