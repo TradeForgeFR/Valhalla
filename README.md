@@ -1,7 +1,11 @@
 # Valhalla Trading Platform
 
+![](/Images/logo1.png)
+
 ## Overview
-Valhalla is an open-source, cross-platform trading software designed to empower traders in futures, cryptocurrencies, and conventional markets. Built using the Avalonia UI framework and ScottPlot, it ensures seamless compatibility across Windows, macOS, and Linux. Our platform stands out for its customizable architecture, advanced charting tools, and plugin-friendly design, making it an ideal choice for traders and developers alike.
+Valhalla is an open-source, cross-platform trading software designed to empower traders in futures, cryptocurrencies, and conventional markets. 
+Built using the [AvaloniaUI](https://avaloniaui.net/ "AvaloniaUI") and [ScottPlot](https://scottplot.net/ "ScottPlot"), it ensures seamless compatibility across Windows, macOS, and Linux. 
+Our platform stands out for its customizable architecture, advanced charting tools, and plugin-friendly design, making it an ideal choice for traders and developers alike.
 
 ---
 
@@ -84,6 +88,8 @@ We thank the Avalonia UI and ScottPlot communities and our contributors for thei
 ---
 
 ## Screenshots
-![Screenshot 1](link-to-screenshot1)
-![Screenshot 2](link-to-screenshot2)
+Volumetrics 
+![](/Images/volumetrics.gif)
 
+Drawing Tools
+![](/Images/draws.gif)
