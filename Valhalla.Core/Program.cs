@@ -1,4 +1,4 @@
-using Valhalla_Core;
+using Valhalla.Core;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();

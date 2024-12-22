@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.Charting", "Valhal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valhalla.TechnicalAnalysis", "Valhalla.TechnicalAnalysis\Valhalla.TechnicalAnalysis.csproj", "{A8E5F884-5947-4986-8066-CC727AEAC3FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla-Core", "Valhalla-Core\Valhalla-Core.csproj", "{1B26F36B-DC5C-473B-BCA1-B69EF8087B7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.Core", "Valhalla.Core\Valhalla.Core.csproj", "{1B26F36B-DC5C-473B-BCA1-B69EF8087B7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.Core.PluginBase", "Valhalla.Core.PluginBase\Valhalla.Core.PluginBase.csproj", "{ACC8576E-3CB3-4CBB-9FD9-9DABCED0ECCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.Core.PluginProvider.Rithmic", "Valhalla.Core.PluginProvider.Rithmic\Valhalla.Core.PluginProvider.Rithmic.csproj", "{2FD545B2-61DD-4D0E-A845-5359BA35D27F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{1B26F36B-DC5C-473B-BCA1-B69EF8087B7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B26F36B-DC5C-473B-BCA1-B69EF8087B7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B26F36B-DC5C-473B-BCA1-B69EF8087B7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACC8576E-3CB3-4CBB-9FD9-9DABCED0ECCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACC8576E-3CB3-4CBB-9FD9-9DABCED0ECCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACC8576E-3CB3-4CBB-9FD9-9DABCED0ECCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACC8576E-3CB3-4CBB-9FD9-9DABCED0ECCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FD545B2-61DD-4D0E-A845-5359BA35D27F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FD545B2-61DD-4D0E-A845-5359BA35D27F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FD545B2-61DD-4D0E-A845-5359BA35D27F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FD545B2-61DD-4D0E-A845-5359BA35D27F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
