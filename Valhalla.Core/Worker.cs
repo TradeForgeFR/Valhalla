@@ -17,7 +17,7 @@ public class Worker : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         Thread proxy = new Thread(RunProxy);
         proxy.IsBackground = true;
@@ -48,17 +48,17 @@ public class Worker : BackgroundService
         
         foreach (var command in commands)
         {
-            command.Execute(XSubscriberConnectionString, XPublisherConnectionString);
+            command.Execute(XSubscriberConnectionString, XPublisherConnectionString, cancellationToken);
         }
         
-        while (!stoppingToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
             }
 
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(1000, cancellationToken);
         }
     }
 

@@ -7,5 +7,5 @@ public interface IProvider
     string Name { get; }
     string Description { get; }
 
-    int Execute(string publisherConnectionString, string subscriberConnectionString);
+    int Execute(string publisherConnectionString, string subscriberConnectionString, CancellationToken cancellationToken = default);
 }
