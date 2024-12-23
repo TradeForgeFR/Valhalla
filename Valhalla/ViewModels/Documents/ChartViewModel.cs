@@ -17,7 +17,6 @@ namespace Valhalla.ViewModels.Documents;
 
 public class ChartViewModel : Document
 {
-    
     public ChartViewModel()
     {
         OHLCs = [];
