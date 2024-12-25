@@ -99,6 +99,6 @@ Drawing Tools
 
 [Kaci Benaissa, Enginer](https://www.linkedin.com/in/kaci-benaissa-163a874a/ "Kaci Benaissa's Linkedin")
 
-[Damien Soudant, Developper](https://www.linkedin.com/in/damien-soudant-a3b469105/ "Damien Soudant's Linkedin")
+[Damien Soudant, Developer](https://www.linkedin.com/in/damien-soudant-a3b469105/ "Damien Soudant's Linkedin")
 
 
